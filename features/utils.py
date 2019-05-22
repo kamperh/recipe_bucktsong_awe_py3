@@ -6,6 +6,10 @@ Contact: kamperh@gmail.com
 Date: 2019
 """
 
+from tqdm import tqdm
+import numpy as np
+
+
 def read_vad_from_fa(fa_fn, frame_indices=True):
     """
     Read voice activity detected (VAD) regions from a forced alignment file.
@@ -79,7 +83,7 @@ def write_samediff_words(fa_fn, output_fn):
                 continue
             words.append((utterance, label, (start, end)))
 
-    print("Finding word tokens.")
+    print("Finding same-different word tokens.")
     words_50fr5ch = []
     for utterance, label, (start, end) in words:
         start_frame = int(round(float(start) * 100))
@@ -95,6 +99,63 @@ def write_samediff_words(fa_fn, output_fn):
         for utterance, label, (start, end) in words_50fr5ch:
             utterance = utterance[:3] + "_" + utterance[3:]
             f.write(
-                label + "_" + utterance + "_%06d-%06d\n" % (int(start),
-                int(end) + 1)
+                label + "_" + utterance + "_%06d-%06d\n" % (int(round(start)),
+                int(round(end)) + 1)
                 )
+
+
+def segments_from_npz(input_npz_fn, segments_fn, output_npz_fn):
+    """
+    Cut segments from a NumPy archive and save in a new archive.
+
+    As keys, the archives use the format "label_spkr_utterance_start-end".
+    """
+
+    # Read the .npz file
+    print("Reading npz:", input_npz_fn)
+    input_npz = np.load(input_npz_fn)
+
+    # Create input npz segments dict
+    utterance_segs = {}  # utterance_segs["s08_02b_029657-029952"]
+                         # is (29657, 29952)
+    for key in input_npz.keys():
+        utterance_segs[key] = tuple(
+            [int(i) for i in key.split("_")[-1].split("-")]
+            )
+
+    # Create target segments dict
+    print("Reading segments:", segments_fn)
+    target_segs = {}  # target_segs["years_s01_01a_004951-005017"]
+                      # is ("s01_01a", 4951, 5017)
+    for line in open(segments_fn):
+        line_split = line.split("_")
+        utterance = line_split[-3] + "_" + line_split[-2]
+        start, end = line_split[-1].split("-")
+        start = int(start)
+        end = int(end)
+        target_segs[line.strip()] = (utterance, start, end)
+
+    print("Extracting segments:")
+    output_npz = {}
+    n_target_segs = 0
+    for target_seg_key in tqdm(target_segs):
+        utterance, target_start, target_end = target_segs[target_seg_key]
+        for utterance_key in [
+                i for i in utterance_segs.keys() if i.startswith(utterance)]:
+            utterannce_start, utterance_end = utterance_segs[utterance_key]
+            if (target_start >= utterannce_start and target_start <=
+                    utterance_end):
+                start = target_start - utterannce_start
+                end = target_end - utterannce_start
+                output_npz[target_seg_key]  = input_npz[utterance_key][start:end]
+                n_target_segs += 1
+                break
+        # if not target_seg_key in output_npz:
+        #     print("Missed:", target_seg_key)
+
+    print(
+        "Extracted " + str(n_target_segs) + " out of " + str(len(target_segs))
+        + " segments."
+        )
+    print("Writing:", output_npz_fn)
+    np.savez(output_npz_fn, **output_npz)
