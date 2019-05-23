@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Extract MFCC and filterbank features for the Buckeye dataset.
+Extract MFCC and filterbank features for the NCHLT Xitsonga dataset.
 
 Author: Herman Kamper
 Contact: kamperh@gmail.com
@@ -18,48 +18,32 @@ import sys
 
 sys.path.append("..")
 
-from paths import buckeye_datadir
+from paths import xitsonga_datadir
 import features
 import utils
 
 
-def extract_features_for_subset(subset, feat_type, output_fn):
+def extract_features(feat_type, output_fn):
     """
-    Extract specified features for a subset.
+    Extract specified features.
 
     The `feat_type` parameter can be "mfcc" or "fbank".
     """
 
-    # Speakers for subset
-    speaker_fn = path.join(
-        "..", "data", "buckeye_" + subset + "_speakers.list"
-        )
-    print("Reading:", speaker_fn)
-    speakers = set()
-    with open(speaker_fn) as f:
-        for line in f:
-            speakers.add(line.strip())
-    print("Speakers:", ", ".join(sorted(speakers)))
-
     # Raw features
     feat_dict = {}
-    print("Extracting features per speaker:")
-    for speaker in sorted(speakers):
-        if feat_type == "mfcc":
-            speaker_feat_dict = features.extract_mfcc_dir(
-                path.join(buckeye_datadir, speaker)
-                )
-        elif feat_type == "fbank":
-            speaker_feat_dict = features.extract_fbank_dir(
-                path.join(buckeye_datadir, speaker)
-                )
-        else:
-            assert False, "invalid feature type"
-        for wav_key in speaker_feat_dict:
-            feat_dict[speaker + "_" + wav_key[3:]] = speaker_feat_dict[wav_key]
+    if feat_type == "mfcc":
+        feat_dict_wavkey = features.extract_mfcc_dir(xitsonga_datadir)
+    elif feat_type == "fbank":
+        feat_dict_wavkey = features.extract_fbank_dir(xitsonga_datadir)
+    else:
+        assert False, "invalid feature type"
+    for wav_key in feat_dict_wavkey:
+        feat_key = utils.uttlabel_to_uttkey(wav_key)
+        feat_dict[feat_key] = feat_dict_wavkey[wav_key]
 
     # Read voice activity regions
-    fa_fn = path.join("..", "data", "buckeye_english.wrd")
+    fa_fn = path.join("..", "data", "xitsonga.wrd")
     print("Reading:", fa_fn)
     vad_dict = utils.read_vad_from_fa(fa_fn)
 
@@ -81,62 +65,55 @@ def main():
     print(datetime.now())
 
     # Extract ground truth words of at least 50 frames and 5 characters.
-    fa_fn = path.join("..", "data", "buckeye_english.wrd")
+    fa_fn = path.join("..", "data", "xitsonga.wrd")
     list_dir = "lists"
     if not path.isdir(list_dir):
         os.makedirs(list_dir)
-    list_fn = path.join(list_dir, "buckeye.samediff.list")
+    list_fn = path.join(list_dir, "xitsonga.samediff.list")
     if not path.isfile(list_fn):
         utils.write_samediff_words(fa_fn, list_fn)
     else:
         print("Using existing file:", list_fn)
-    
-    # Extract MFCCs for the different sets
-    mfcc_dir = path.join("mfcc", "buckeye")
-    for subset in ["devpart1", "devpart2", "zs"]:
-        if not path.isdir(mfcc_dir):
-            os.makedirs(mfcc_dir)
-        output_fn = path.join(mfcc_dir, subset + ".dd.npz")
-        if not path.isfile(output_fn):
-            print("Extracting MFCCs:", subset)
-            extract_features_for_subset(subset, "mfcc", output_fn)
-        else:
-            print("Using existing file:", output_fn)
 
-    # Extract word segments from the MFCC NumPy archives
-    for subset in ["devpart1", "devpart2", "zs"]:
-        input_npz_fn = path.join(mfcc_dir, subset + ".dd.npz")
-        output_npz_fn = path.join(mfcc_dir, subset + ".samediff.dd.npz")
-        if not path.isfile(output_npz_fn):
-            print("Extracting MFCCs for same-different word tokens:", subset)
-            utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
-        else:
-            print("Using existing file:", output_npz_fn)
+    # Extract MFCCs
+    mfcc_dir = path.join("mfcc", "xitsonga")
+    if not path.isdir(mfcc_dir):
+        os.makedirs(mfcc_dir)
+    output_fn = path.join(mfcc_dir, "xitsonga.dd.npz")
+    if not path.isfile(output_fn):
+        print("Extracting MFCCs")
+        extract_features("mfcc", output_fn)
+    else:
+        print("Using existing file:", output_fn)
 
-    # Extract filterbanks for the different sets
-    fbank_dir = path.join("fbank", "buckeye")
-    for subset in ["devpart1", "devpart2", "zs"]:
-        if not path.isdir(fbank_dir):
-            os.makedirs(fbank_dir)
-        output_fn = path.join(fbank_dir, subset + ".npz")
-        if not path.isfile(output_fn):
-            print("Extracting filterbanks:", subset)
-            extract_features_for_subset(subset, "fbank", output_fn)
-        else:
-            print("Using existing file:", output_fn)
+    # Extract word segments from the MFCC NumPy archive
+    input_npz_fn = path.join(mfcc_dir, "xitsonga.dd.npz")
+    output_npz_fn = path.join(mfcc_dir, "xitsonga.samediff.dd.npz")
+    if not path.isfile(output_npz_fn):
+        print("Extracting MFCCs for same-different word tokens")
+        utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
+    else:
+        print("Using existing file:", output_npz_fn)
 
-    # Extract word segments from the MFCC NumPy archives
-    for subset in ["devpart1", "devpart2", "zs"]:
-        input_npz_fn = path.join(fbank_dir, subset + ".npz")
-        output_npz_fn = path.join(fbank_dir, subset + ".samediff.npz")
-        if not path.isfile(output_npz_fn):
-            print(
-                "Extracting filterbanks for same-different word tokens:",
-                subset
-                )
-            utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
-        else:
-            print("Using existing file:", output_npz_fn)
+    # Extract filterbanks
+    fbank_dir = path.join("fbank", "xitsonga")
+    if not path.isdir(fbank_dir):
+        os.makedirs(fbank_dir)
+    output_fn = path.join(fbank_dir, "xitsonga.npz")
+    if not path.isfile(output_fn):
+        print("Extracting filterbanks")
+        extract_features("fbank", output_fn)
+    else:
+        print("Using existing file:", output_fn)
+
+    # Extract word segments from the filterbank NumPy archive
+    input_npz_fn = path.join(fbank_dir, "xitsonga.npz")
+    output_npz_fn = path.join(fbank_dir, "xitsonga.samediff.npz")
+    if not path.isfile(output_npz_fn):
+        print("Extracting filterbanks for same-different word tokens")
+        utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
+    else:
+        print("Using existing file:", output_npz_fn)
 
     print(datetime.now())
 

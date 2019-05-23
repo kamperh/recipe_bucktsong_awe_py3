@@ -10,6 +10,18 @@ from tqdm import tqdm
 import numpy as np
 
 
+def uttlabel_to_uttkey(utterance):
+    if utterance.startswith("nchlt"):
+        # Xitsonga
+        utt_split = utterance.split("_")
+        speaker = utt_split.pop(2)
+        utt_key = speaker + "_" + "-".join(utt_split)
+    else:
+        # Buckeye
+        utt_key = utterance[0:3] + "_" + utterance[3:]
+    return utt_key
+
+
 def read_vad_from_fa(fa_fn, frame_indices=True):
     """
     Read voice activity detected (VAD) regions from a forced alignment file.
@@ -28,8 +40,9 @@ def read_vad_from_fa(fa_fn, frame_indices=True):
                 ).split()
             start_token = float(start_token)
             end_token = float(end_token)
-            utterance = utterance.replace("_", "-")
-            utt_key = utterance[0:3] + "_" + utterance[3:]
+            # utterance = utterance.replace("_", "-")
+            utt_key = uttlabel_to_uttkey(utterance)
+            # utt_key = utterance[0:3] + "_" + utterance[3:]
             if utt_key not in vad_dict:
                 vad_dict[utt_key] = []
 
@@ -37,7 +50,8 @@ def read_vad_from_fa(fa_fn, frame_indices=True):
                 continue
             if prev_end_time != start_token or prev_utterance != utterance:
                 if prev_end_time != -1:
-                    utt_key = prev_utterance[0:3] + "_" + prev_utterance[3:]
+                    utt_key = uttlabel_to_uttkey(prev_utterance)
+                    # utt_key = prev_utterance[0:3] + "_" + prev_utterance[3:]
                     if frame_indices:
                         # Convert time to frames
                         start = int(round(start_time * 100))
@@ -53,7 +67,8 @@ def read_vad_from_fa(fa_fn, frame_indices=True):
             prev_token_label = token_label
             prev_utterance = utterance
 
-        utt_key = prev_utterance[0:3] + "_" + prev_utterance[3:]
+        utt_key = uttlabel_to_uttkey(prev_utterance)
+        # utt_key = prev_utterance[0:3] + "_" + prev_utterance[3:]
         if frame_indices:
             # Convert time to frames
             start = int(round(start_time * 100))
@@ -76,7 +91,7 @@ def write_samediff_words(fa_fn, output_fn):
     with open(fa_fn, "r") as f:
         for line in f:
             utterance, start, end, label = line.strip().split()
-            utterance = utterance.replace("_", "-")
+            # utterance = utterance.replace("_", "-")
             start = float(start)
             end = float(end)
             if label in ["SIL", "SPN"]:
@@ -97,9 +112,10 @@ def write_samediff_words(fa_fn, output_fn):
     print("Writing:", output_fn)
     with open(output_fn, "w") as f:
         for utterance, label, (start, end) in words_50fr5ch:
-            utterance = utterance[:3] + "_" + utterance[3:]
+            utt_key = uttlabel_to_uttkey(utterance)
+            # utt_key = utterance[0:3] + "_" + utterance[3:]
             f.write(
-                label + "_" + utterance + "_%06d-%06d\n" % (int(round(start)),
+                label + "_" + utt_key + "_%06d-%06d\n" % (int(round(start)),
                 int(round(end)) + 1)
                 )
 

@@ -125,7 +125,7 @@ def main():
         else:
             print("Using existing file:", output_fn)
 
-    # Extract word segments from the MFCC NumPy archives
+    # Extract word segments from the filterbank NumPy archives
     for subset in ["devpart1", "devpart2", "zs"]:
         input_npz_fn = path.join(fbank_dir, subset + ".npz")
         output_npz_fn = path.join(fbank_dir, subset + ".samediff.npz")

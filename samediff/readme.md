@@ -23,13 +23,9 @@ Evaluate MFCCs:
     ./run_calcdists.sh ../features/mfcc/buckeye/zs.samediff.dd.npz
     ./run_samediff.sh ../features/mfcc/buckeye/zs.samediff.dd.npz
 
-
-
     # Xitsonga  TO-DO
-    ./run_calcdists.sh \
-        ../features/wordpairs/xitsonga/xitsonga.samediff.mfcc.cmvn_dd.npz
-    ./run_samediff.sh  \
-        ../features/wordpairs/xitsonga/xitsonga.samediff.mfcc.cmvn_dd.npz
+    ./run_calcdists.sh ../features/mfcc/xitsonga/xitsonga.samediff.dd.npz
+    ./run_samediff.sh ../features/mfcc/xitsonga/xitsonga.samediff.dd.npz
 
 Evaluate filterbanks:
 
@@ -37,19 +33,13 @@ Evaluate filterbanks:
     ./run_calcdists.sh ../features/fbank/buckeye/devpart2.samediff.npz
     ./run_samediff.sh ../features/fbank/buckeye/devpart2.samediff.npz
 
+    # ZeroSpeech
+    ./run_calcdists.sh ../features/fbank/buckeye/zs.samediff.npz
+    ./run_samediff.sh ../features/fbank/buckeye/zs.samediff.npz
 
-
-
-    ./run_calcdists.sh \
-        ../features/wordpairs/devpart2/devpart2.samediff.fbank.mvn.npz
-    ./run_samediff.sh  \
-        ../features/wordpairs/devpart2/devpart2.samediff.fbank.mvn.npz
-
-    # Xitsonga
-    ./run_calcdists.sh \
-        ../features/wordpairs/xitsonga/xitsonga.samediff.fbank.mvn.npz
-    ./run_samediff.sh  \
-        ../features/wordpairs/xitsonga/xitsonga.samediff.fbank.mvn.npz
+    # Xitsonga TO-DO
+    ./run_calcdists.sh ../features/fbank/xitsonga/xitsonga.samediff.npz
+    ./run_samediff.sh ../features/fbank/xitsonga/xitsonga.samediff.npz
 
 
 Results
@@ -61,14 +51,18 @@ Devpart2 MFFCs:
 
 Devpart2 filterbanks:
 
-    # TO-DO
-    Average precision: 0.19268681067
+    Average precision: 0.192686800537
     Precision-recall breakeven: 0.256066081569
 
 ZeroSpeech MFFCs:
 
     Average precision: 0.360448500146
     Precision-recall breakeven: 0.396221693982
+
+ZeroSpeech filterbanks:
+
+    Average precision: 0.193150835418
+    Precision-recall breakeven: 0.261508627742
     
 Xitsonga MFFCs:
 
