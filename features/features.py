@@ -7,9 +7,6 @@ Date: 2019
 """
 
 from os import path
-from python_speech_features import delta  # TO-DO (this or librosa?)
-from python_speech_features import logfbank
-from python_speech_features import mfcc
 from tqdm import tqdm
 import glob
 import librosa
@@ -22,17 +19,25 @@ def extract_fbank_dir(dir):
     Extract filterbanks for all audio files in `dir` and return a dictionary.
 
     Each dictionary key will be the filename of the associated audio file
-    without the extension.
+    without the extension. Mel-scale log filterbanks are extracted.
     """
     feat_dict = {}
     for wav_fn in tqdm(sorted(glob.glob(path.join(dir, "*.wav")))):
-        samplerate, signal = wav.read(wav_fn)
-        fbanks = logfbank(
-            signal, samplerate=samplerate, winlen=0.025, winstep=0.01,
-            nfilt=45, nfft=2048, lowfreq=0, highfreq=None, preemph=0,
-            winfunc=np.hamming
-            )
-        feat_dict[path.splitext(path.split(wav_fn)[-1])[0]] = fbanks
+        signal, sample_rate = librosa.core.load(wav_fn, sr=None)
+        fbank = np.log(librosa.feature.melspectrogram(
+            signal, sr=sample_rate, n_mels=40,
+            n_fft=int(np.floor(0.025*sample_rate)),
+            hop_length=int(np.floor(0.01*sample_rate)), fmin=64, fmax=8000,
+            ))
+        # from python_speech_features import logfbank
+        # samplerate, signal = wav.read(wav_fn)
+        # fbanks = logfbank(
+        #     signal, samplerate=samplerate, winlen=0.025, winstep=0.01,
+        #     nfilt=45, nfft=2048, lowfreq=0, highfreq=None, preemph=0,
+        #     winfunc=np.hamming
+        #     )
+        key = path.splitext(path.split(wav_fn)[-1])[0]
+        feat_dict[key] = fbank.T
     return feat_dict
 
 
@@ -49,11 +54,18 @@ def extract_mfcc_dir(dir):
         mfcc = librosa.feature.mfcc(
             signal, sr=sample_rate, n_mfcc=13, n_mels=24, dct_type=3,
             n_fft=int(np.floor(0.025*sample_rate)),
-            hop_length=int(np.floor(0.01*sample_rate)), fmin=0, fmax=None,
+            hop_length=int(np.floor(0.01*sample_rate)), fmin=0, fmax=8000,
             htk=True
             )
+        # mfcc = librosa.feature.mfcc(
+        #     signal, sr=sample_rate, n_mfcc=13,
+        #     n_fft=int(np.floor(0.025*sample_rate)),
+        #     hop_length=int(np.floor(0.01*sample_rate))
+        #     )
         mfcc_delta = librosa.feature.delta(mfcc)
         mfcc_delta_delta = librosa.feature.delta(mfcc, order=2)
+        # from python_speech_features import delta
+        # from python_speech_features import mfcc
         # samplerate, signal = wav.read(wav_fn)
         # mfccs = mfcc(
         #     signal, samplerate=samplerate, winlen=0.025, winstep=0.01,
@@ -81,6 +93,9 @@ def extract_vad(feat_dict, vad_dict):
     """
     output_dict = {}
     for utt_key in tqdm(sorted(feat_dict)):
+        if utt_key not in vad_dict:
+            print("Warning: missing VAD for utterance", utt_key)
+            continue
         for (start, end) in vad_dict[utt_key]:
             segment_key = utt_key + "_{:06d}-{:06d}".format(start, end)
             output_dict[segment_key] = feat_dict[utt_key][start:end, :]

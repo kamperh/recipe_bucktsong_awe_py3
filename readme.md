@@ -42,9 +42,6 @@ details of which speakers are found in which set is also given at the end of
 [features/readme.md](features/readme.md). We use the Xitsonga dataset provided
 as part of the Zero Speech Challenge 2015 (a subset of the NCHLT data).
 
-Update the paths in `paths.py` to point to the datasets. If you are using
-docker, `paths.py` will already point to the mounted directories.
-
 
 Create Docker container
 -----------------------
@@ -58,16 +55,24 @@ create a virtual environment and install the necessary dependencies:
 
     python3 -m venv ~/tools/py3_tf1.13
     source ~/tools/py3_tf1.13/bin/activate
-    ./install_dependencies.sh
+    ./install_dependencies.sh  # TO-DO: Update requirements.txt
 
 
 Extract speech features
 -----------------------
+Update the paths in `paths.py` to point to the datasets. If you are using
+docker, `paths.py` will already point to the mounted directories. Extract MFCC
+and filterbank features in the `features/` directory as follows:
 
+    cd features
+    ./extract_features_buckeye.py    
+    ./extract_features_xitsonga.py  # TO-DO: Still need this script
 
 
 Evaluate frame-level features using the same-different task
 -----------------------------------------------------------
+This is optional. To perform frame-level same-different evaluation based on
+dynamic time warping (DTW), follow [samediff/readme.md](samediff/readme.md).
 
 
 Obtain downsampled acoustic word embeddings

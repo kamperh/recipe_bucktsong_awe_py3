@@ -83,7 +83,7 @@ def write_samediff_words(fa_fn, output_fn):
                 continue
             words.append((utterance, label, (start, end)))
 
-    print("Finding same-different word tokens.")
+    print("Finding same-different word tokens")
     words_50fr5ch = []
     for utterance, label, (start, end) in words:
         start_frame = int(round(float(start) * 100))
@@ -138,7 +138,7 @@ def segments_from_npz(input_npz_fn, segments_fn, output_npz_fn):
     print("Extracting segments:")
     output_npz = {}
     n_target_segs = 0
-    for target_seg_key in tqdm(target_segs):
+    for target_seg_key in tqdm(sorted(target_segs)):
         utterance, target_start, target_end = target_segs[target_seg_key]
         for utterance_key in [
                 i for i in utterance_segs.keys() if i.startswith(utterance)]:
@@ -147,11 +147,11 @@ def segments_from_npz(input_npz_fn, segments_fn, output_npz_fn):
                     utterance_end):
                 start = target_start - utterannce_start
                 end = target_end - utterannce_start
-                output_npz[target_seg_key]  = input_npz[utterance_key][start:end]
+                output_npz[target_seg_key] = input_npz[
+                    utterance_key
+                    ][start:end]
                 n_target_segs += 1
                 break
-        # if not target_seg_key in output_npz:
-        #     print("Missed:", target_seg_key)
 
     print(
         "Extracted " + str(n_target_segs) + " out of " + str(len(target_segs))
