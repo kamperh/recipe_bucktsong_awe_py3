@@ -23,7 +23,7 @@ Evaluate MFCCs:
     ./run_calcdists.sh ../features/mfcc/buckeye/zs.samediff.dd.npz
     ./run_samediff.sh ../features/mfcc/buckeye/zs.samediff.dd.npz
 
-    # Xitsonga  TO-DO
+    # Xitsonga
     ./run_calcdists.sh ../features/mfcc/xitsonga/xitsonga.samediff.dd.npz
     ./run_samediff.sh ../features/mfcc/xitsonga/xitsonga.samediff.dd.npz
 
@@ -37,7 +37,7 @@ Evaluate filterbanks:
     ./run_calcdists.sh ../features/fbank/buckeye/zs.samediff.npz
     ./run_samediff.sh ../features/fbank/buckeye/zs.samediff.npz
 
-    # Xitsonga TO-DO
+    # Xitsonga
     ./run_calcdists.sh ../features/fbank/xitsonga/xitsonga.samediff.npz
     ./run_samediff.sh ../features/fbank/xitsonga/xitsonga.samediff.npz
 
@@ -66,12 +66,10 @@ ZeroSpeech filterbanks:
     
 Xitsonga MFFCs:
 
-    # TO-DO
-    Average precision: 0.281450179468
-    Precision-recall breakeven: 0.344160051839
+    Average precision: 0.265691186512
+    Precision-recall breakeven: 0.329374601376
 
 Xitsonga filterbanks:
 
-    # TO-DO
-    Average precision: 0.127098865168
-    Precision-recall breakeven: 0.207577352989
+    Average precision: 0.12477363302
+    Precision-recall breakeven: 0.20666915823

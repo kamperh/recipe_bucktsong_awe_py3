@@ -50,12 +50,20 @@ Create Docker container
 
 If not using Docker: Install dependencies
 -----------------------------------------
-If you are not using the Docker image, you can use the following steps to
-create a virtual environment and install the necessary dependencies:
+If you are not using the Docker image, you will need to install the following
+dependencies:
+
+- [Python 3](TO-DO)
+- librosa
+- etc. TO-DO
+
+You can use the following steps to create a virtual environment and install
+these dependencies:
 
     python3 -m venv ~/tools/py3_tf1.13
     source ~/tools/py3_tf1.13/bin/activate
     ./install_dependencies.sh  # TO-DO: Update requirements.txt
+
 
 
 Extract speech features
@@ -66,7 +74,7 @@ and filterbank features in the `features/` directory as follows:
 
     cd features
     ./extract_features_buckeye.py    
-    ./extract_features_xitsonga.py  # TO-DO: Still need this script
+    ./extract_features_xitsonga.py
 
 
 Evaluate frame-level features using the same-different task
