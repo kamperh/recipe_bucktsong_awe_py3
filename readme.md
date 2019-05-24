@@ -55,6 +55,8 @@ dependencies:
 
 - [Python 3](TO-DO)
 - librosa
+- TensorFlow (pip install tensorflow==1.13.1)
+- Jupyter
 - etc. TO-DO
 
 You can use the following steps to create a virtual environment and install
@@ -73,7 +75,7 @@ docker, `paths.py` will already point to the mounted directories. Extract MFCC
 and filterbank features in the `features/` directory as follows:
 
     cd features
-    ./extract_features_buckeye.py    
+    ./extract_features_buckeye.py
     ./extract_features_xitsonga.py
 
 
@@ -99,3 +101,8 @@ Testing
 -------
 In the root project directory, run `make test` to run unit tests.
 
+
+License
+-------
+The code is distributed under the Creative Commons Attribution-ShareAlike
+license ([CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/)).
