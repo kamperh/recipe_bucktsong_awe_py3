@@ -27,8 +27,6 @@ def load_data_from_npz(npz_fn, min_length=None):
         x.append(npz[utt_key])
         word = utt_key.split("_")[0]
         speaker = utt_key.split("_")[1][:3]
-        print(word, speaker)
-        assert False
         labels.append(word)
         speakers.append(speaker)
         lengths.append(npz[utt_key].shape[0])
