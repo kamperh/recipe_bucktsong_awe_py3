@@ -85,6 +85,17 @@ If you are not using Docker, install the following dependencies:
 - [LibROSA](http://librosa.github.io/librosa/)
 - [Cython](https://cython.org/)
 - [tqdm](https://tqdm.github.io/)
+- [speech_dtw](https://github.com/kamperh/speech_dtw/)
+
+To install `speech_dtw`, clone the required GitHub repositories into `../src/`
+and compile the code as follows:
+
+    mkdir ../src/  # not necessary using docker
+    git clone https://github.com/kamperh/speech_dtw.git ../src/speech_dtw/
+    cd ../src/speech_dtw
+    make
+    make test
+    cd -
 
 
 Extract speech features
