@@ -94,7 +94,7 @@ def tile_images(X, image_shape, tile_shape, tile_spacing=(1, 1),
 def make_patch_spines_invisible(ax):
     ax.set_frame_on(True)
     ax.patch.set_visible(False)
-    for sp in ax.spines.itervalues():
+    for sp in ax.spines.values():
         sp.set_visible(False)
 
 

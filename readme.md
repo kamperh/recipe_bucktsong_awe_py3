@@ -104,6 +104,8 @@ dynamic time warping (DTW), follow [samediff/readme.md](samediff/readme.md).
 
 Obtain downsampled acoustic word embeddings
 -------------------------------------------
+Extract and evaluate downsampled acoustic word embeddings by running the steps
+in [downsample/readme.md](downsample/readme.md).
 
 
 Train neural acoustic word embeddings
