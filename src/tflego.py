@@ -281,6 +281,68 @@ def build_cnn(x, input_shape, filter_shapes, pool_shapes, padding="VALID"):
 
 
 #-----------------------------------------------------------------------------#
+#                        TRANSPOSED CONVOLUTION BLOCKS                        #
+#-----------------------------------------------------------------------------#
+
+def get_conv2d_transpose_output_shape(input_shape, filter_shape, stride=1):
+    """
+    Calculate the output shape of a transposed convolution operation.
+    
+    See https://stackoverflow.com/questions/46885191.
+    
+    Parameters
+    ----------
+    input_shape : list
+        The shape of the input to the CNN as [n_data, height, width, d_in].
+    filter_shape : list of list
+        The filter shape of each layer as [height, width, d_out, d_in].
+    """
+    input_height = input_shape[1]
+    input_width = input_shape[2]
+    filter_height = filter_shape[0]
+    filter_width = filter_shape[1]
+    output_height = (input_height - 1)*stride + filter_height
+    output_width = (input_width - 1)*stride + filter_width
+    return [input_shape[0], output_height, output_width, filter_shape[2]]    
+
+
+def build_conv2d_transpose(x, filter_shape, stride=1, activation=tf.nn.relu):
+    """Single transposed convolutional layer."""
+    W = tf.get_variable(
+        "W", filter_shape, dtype=TF_DTYPE,
+        initializer=tf.contrib.layers.xavier_initializer()
+        )
+    b = tf.get_variable(
+        "b", [filter_shape[-2]], dtype=TF_DTYPE,
+        initializer=tf.random_normal_initializer()
+        )
+    input_shape = x.get_shape().as_list()
+    output_shape = get_conv2d_transpose_output_shape(
+        x.get_shape().as_list(), W.get_shape().as_list()
+        )
+    output_shape[0] = tf.shape(x)[0]
+    x = tf.nn.conv2d_transpose(
+        x, W, output_shape, strides=[1, stride, stride, 1], padding="VALID"
+        )
+    x = tf.nn.bias_add(x, b)
+    return activation(x)
+
+
+def build_unmaxpool2d(x, pool_shape):
+    """
+    Unpool by repeating units.
+    
+    See:
+    - https://github.com/keras-team/keras/issues/378
+    - https://swarbrickjones.wordpress.com/2015/04/29
+    """
+    from tensorflow.keras.backend import repeat_elements
+    s1 = pool_shape[0]
+    s2 = pool_shape[1]
+    return repeat_elements(repeat_elements(x, s1, axis=1), s2, axis=2)
+
+
+#-----------------------------------------------------------------------------#
 #                            ENCODER-DECODER BLOCKS                           #
 #-----------------------------------------------------------------------------#
 

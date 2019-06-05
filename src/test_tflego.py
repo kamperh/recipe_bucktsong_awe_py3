@@ -197,7 +197,7 @@ def test_cnn():
     test_data = np.asarray(np.random.randn(n_data, n_input), dtype=NP_DTYPE)
 
     # Model parameters
-    input_shape = [-1, 28, 28, 1] # [n_data, height, width, d_in]
+    input_shape = [-1, 28, 28, 1]  # [n_data, height, width, d_in]
     filter_shapes = [
         [5, 5, 1, 32],
         [5, 5, 32, 64]
@@ -232,11 +232,61 @@ def test_cnn():
         W_1 = W_1.eval()
         b_1 = b_1.eval()
 
-    # Numpy model
+    # NumPy model
     np_output = np_cnn(
         test_data, input_shape, [W_0, W_1], [b_0, b_1], pool_shapes
         )
     np_output = np_output.reshape(np_output.shape[0], -1)
+
+    npt.assert_almost_equal(tf_output, np_output, decimal=5)
+
+
+def test_conv2d_transpose():
+
+    tf.reset_default_graph()
+
+    # Random seed
+    np.random.seed(1)
+    tf.set_random_seed(1)
+
+    # Test data
+    n_input = 4*4*5
+    n_data = 2
+    test_data = np.asarray(np.random.randn(n_data, n_input), dtype=NP_DTYPE)
+
+    # Model parameters
+    input_shape = [-1, 4, 4, 5]  # [n_data, height, width, d_in]
+    filter_shape = [3, 3, 2, 5]  # [filter_height, filter_width, d_out, d_in]
+
+    # TensorFlow model
+    x = tf.placeholder(TF_DTYPE, [None, n_input])
+    x_reshaped = tf.reshape(x, input_shape)
+    i_layer = 0
+    with tf.variable_scope("cnn_transpose_layer_{}".format(i_layer)):
+        conv_transpose = build_conv2d_transpose(
+            x_reshaped, filter_shape, activation=tf.identity
+            )
+    with tf.variable_scope("cnn_transpose_layer_0", reuse=True):
+        W_0 = tf.get_variable("W")
+        b_0 = tf.get_variable("b")
+
+    # TensorFlow graph
+    init = tf.global_variables_initializer()
+    with tf.Session() as session:
+        session.run(init)
+
+        # Output
+        tf_output = conv_transpose.eval({x: test_data})
+
+        # Parameters
+        W_0 = W_0.eval()
+        b_0 = b_0.eval()
+
+    # NumPy model
+    x_np = test_data.reshape(input_shape)
+    W_dash = np.rot90(W_0, k=2)
+    W_dash = np.transpose(W_dash, (0, 1, 3, 2))
+    np_output = np_conv2d(x_np, W_dash, padding="full") + b_0
 
     npt.assert_almost_equal(tf_output, np_output, decimal=5)
 
@@ -342,7 +392,7 @@ def test_multi_rnn():
         W_1 = W_1.eval()
         b_1 = b_1.eval()
 
-    # Numpy model
+    # NumPy model
     np_output = np_multi_rnn(test_data, lengths, [W_0, W_1], [b_0, b_1], n_maxlength)
 
     npt.assert_almost_equal(tf_output, np_output, decimal=5)

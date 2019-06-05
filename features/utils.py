@@ -175,3 +175,199 @@ def segments_from_npz(input_npz_fn, segments_fn, output_npz_fn):
         )
     print("Writing:", output_npz_fn)
     np.savez(output_npz_fn, **output_npz)
+
+
+def strip_nonvad(utt, start, end, vads):
+    """
+    Return
+    ------
+    (nonvad_start, nonvad_end) : (int, int)
+        Updated term indices. None is returned if the term does not fall in a
+        VAD region.
+    """
+
+    # Get the VAD regions
+    vad_starts = [i[0] for i in vads]
+    vad_ends = [i[1] for i in vads]
+
+    # Find VAD region with maximum overlap
+    overlaps = []
+    for (vad_start, vad_end) in zip(vad_starts, vad_ends):
+        if vad_end <= start:
+            overlaps.append(0)
+        elif vad_start >= end:
+            overlaps.append(0)
+        else:
+            overlap = end - start
+            if vad_start > start:
+                overlap -= vad_start - start
+            if vad_end < end:
+                overlap -= end - vad_end
+            overlaps.append(overlap)
+    
+    if np.all(np.array(overlaps) == 0):
+        # This term isn't in VAD.
+        return None
+
+    i_vad = np.argmax(overlaps)
+    vad_start = vad_starts[i_vad]
+    vad_end = vad_ends[i_vad]
+    # print("VAD with max overlap:", (vad_start, vad_end))
+
+    # Now strip non-VAD regions
+    if vad_start > start:
+        start = vad_start
+    if vad_end < end:
+        end = vad_end
+
+    return (start, end)
+
+
+def strip_nonvad_from_pairs(vad_dict, input_pairs_fn, output_pairs_fn,
+        log=False):
+
+    # Now keep only VAD regions
+    if log:
+        print("-"*39)
+    f = open(output_pairs_fn, "w")
+    print("Writing:", output_pairs_fn)
+    for line in tqdm(open(input_pairs_fn)):
+
+        line = line.strip().split(" ")
+
+        if len(line) == 9:
+            # Aren's format
+            (
+                cluster, utt1, speaker1, start1, end1, utt2, speaker2, start2,
+                end2
+            ) = line
+            start1 = int(start1)
+            end1 = int(end1)
+            start2 = int(start2)
+            end2 = int(end2)
+            utt1 = uttlabel_to_uttkey(utt1)
+            utt2 = uttlabel_to_uttkey(utt2)
+            # utt1 = utt1.replace("_", "-")
+            # utt2 = utt2.replace("_", "-")
+        elif len(line) == 6:
+            # Sameer's format
+            utt1, start1, end1, utt2, start2, end2 = line
+            speaker1 = utt1[:3]
+            speaker2 = utt2[:3]
+            cluster = "?"            
+            start1 = int(np.floor(float(start1)*100))
+            end1 = int(np.floor(float(end1)*100))
+            start2 = int(np.floor(float(start2)*100))
+            end2 = int(np.floor(float(end2)*100))
+
+        # Utterances missing from forced alignments
+        if utt1 == "s01_03a" or utt2 == "s01_03a":
+            continue
+
+        if (utt1 == utt2) and (start2 <= start1 <= end2 or
+                    start2 <= end1 <= end2):
+            if log:
+                print(
+                    "Warning: pairs from overlapping speech:", utt1, start1,
+                    end1, start2, end2
+                    )
+            continue
+
+        # Process the first term in the pair
+        if log:
+            print(
+                "Processing:", utt1, "(" + str(start1) + ", " + str(end1) +
+                "), cluster", cluster
+                )
+        if speaker1 == "nch":
+            wav1_fn = utt1.replace("-", "_") + ".wav"
+            wav2_fn = utt1.replace("-", "_") + ".wav"
+        else:
+            wav1_fn = "%s/%s.wav" % (speaker1, utt1.replace("_", ""))
+            wav2_fn = "%s/%s.wav" % (speaker2, utt2.replace("_", ""))
+        sox_play_str = (
+            "play \"| sox %s -p trim %f %f\"" % (wav1_fn,
+            float(start1)/100., float(end1 - start1)/100.)
+            )
+        if log:
+            print("Raw term play command:", sox_play_str)
+        # if utt1 == "s05_03b":
+        #     print(utt1, start1, end1, vad_dict[utt1])
+        #     assert False
+        nonvad_indices = strip_nonvad(utt1, start1, end1, vad_dict[utt1])
+        if nonvad_indices is None:
+            continue
+        nonvad_start1, nonvad_end1 = nonvad_indices
+        if nonvad_start1 != start1 or nonvad_end1 != end1:
+            if log:
+                print("Term changed")
+        sox_play_str = (
+            "play \"| sox %s -p trim %f %f\"" % (wav1_fn,
+            float(nonvad_start1)/100., float(nonvad_end1 - nonvad_start1)/100.)
+            )
+        if log:
+            print("Term play command after VAD:", sox_play_str)
+
+        if log:
+            print()
+            print(
+                "Processing:", utt2, "(" + str(start2) + ", " +
+                str(end2) + "), cluster", cluster
+                )
+        sox_play_str = (
+            "play \"| sox %s -p trim %f %f\"" % (wav2_fn,
+            float(start2)/100., float(end2 - start2)/100.)
+            )
+        if log:
+            print("Raw term play command:", sox_play_str)
+        nonvad_indices = strip_nonvad(utt2, start2, end2, vad_dict[utt2])
+        if nonvad_indices is None:
+            continue
+        nonvad_start2, nonvad_end2 = nonvad_indices
+        if nonvad_start2 != start2 or nonvad_end2 != end2:
+            if log:
+                print("Term changed")
+        sox_play_str = (
+            "play \"| sox %s -p trim %f %f\"" % (wav2_fn,
+            float(nonvad_start2)/100., float(nonvad_end2 - nonvad_start2)/100.)
+            )
+        if log:
+            print("Term play command after VAD:", sox_play_str)
+
+        f.write(
+            cluster + " " + utt1 + " " + str(nonvad_start1) + " " +
+            str(nonvad_end1) + " " + utt2 + " " + str(nonvad_start2) + " " +
+            str(nonvad_end2) + "\n"
+            )
+
+        if log:
+            print("-"*39)
+        # break
+    if log:
+        print("Wrote updated pairs:", output_pairs_fn)
+    f.close()
+
+
+def terms_from_pairs(pairs_fn, output_list_fn):
+
+    print("Reading:", pairs_fn)
+    terms = set()
+    with open(pairs_fn) as f:
+        for line in f:
+            (
+                cluster, utt1, start1, end1, utt2, start2, end2
+            ) = line.strip().split(" ")
+            start1 = int(start1)
+            end1 = int(end1)
+            start2 = int(start2)
+            end2 = int(end2)
+            terms.add((cluster, utt1, start1, end1))
+            terms.add((cluster, utt2, start2, end2))
+
+    print("Writing:", output_list_fn)
+    with open(output_list_fn, "w") as f:
+        for cluster, utt, start, end in terms:
+            f.write(
+                cluster + "_" + utt + "_" + "%06d" % start + "-" + "%06d" % end
+                + "\n"
+                )

@@ -64,16 +64,7 @@ def main():
 
     print(datetime.now())
 
-    # Extract ground truth words of at least 50 frames and 5 characters.
-    fa_fn = path.join("..", "data", "xitsonga.wrd")
-    list_dir = "lists"
-    if not path.isdir(list_dir):
-        os.makedirs(list_dir)
-    list_fn = path.join(list_dir, "xitsonga.samediff.list")
-    if not path.isfile(list_fn):
-        utils.write_samediff_words(fa_fn, list_fn)
-    else:
-        print("Using existing file:", list_fn)
+    # RAW FEATURES
 
     # Extract MFCCs
     mfcc_dir = path.join("mfcc", "xitsonga")
@@ -86,15 +77,6 @@ def main():
     else:
         print("Using existing file:", output_fn)
 
-    # Extract word segments from the MFCC NumPy archive
-    input_npz_fn = path.join(mfcc_dir, "xitsonga.dd.npz")
-    output_npz_fn = path.join(mfcc_dir, "xitsonga.samediff.dd.npz")
-    if not path.isfile(output_npz_fn):
-        print("Extracting MFCCs for same-different word tokens")
-        utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
-    else:
-        print("Using existing file:", output_npz_fn)
-
     # Extract filterbanks
     fbank_dir = path.join("fbank", "xitsonga")
     if not path.isdir(fbank_dir):
@@ -106,11 +88,69 @@ def main():
     else:
         print("Using existing file:", output_fn)
 
+
+    # GROUND TRUTH WORD SEGMENTS
+
+    # Create a ground truth word list of at least 50 frames and 5 characters
+    fa_fn = path.join("..", "data", "xitsonga.wrd")
+    list_dir = "lists"
+    if not path.isdir(list_dir):
+        os.makedirs(list_dir)
+    list_fn = path.join(list_dir, "xitsonga.samediff.list")
+    if not path.isfile(list_fn):
+        utils.write_samediff_words(fa_fn, list_fn)
+    else:
+        print("Using existing file:", list_fn)
+
+    # Extract word segments from the MFCC NumPy archive
+    input_npz_fn = path.join(mfcc_dir, "xitsonga.dd.npz")
+    output_npz_fn = path.join(mfcc_dir, "xitsonga.samediff.dd.npz")
+    if not path.isfile(output_npz_fn):
+        print("Extracting MFCCs for same-different word tokens")
+        utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
+    else:
+        print("Using existing file:", output_npz_fn)
+
     # Extract word segments from the filterbank NumPy archive
     input_npz_fn = path.join(fbank_dir, "xitsonga.npz")
     output_npz_fn = path.join(fbank_dir, "xitsonga.samediff.npz")
     if not path.isfile(output_npz_fn):
         print("Extracting filterbanks for same-different word tokens")
+        utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
+    else:
+        print("Using existing file:", output_npz_fn)
+
+
+    # UTD-DISCOVERED WORD SEGMENTS
+
+    # Remove non-VAD regions from the UTD pair list
+    input_pairs_fn = path.join("..", "data", "zs_tsonga.fdlps.0.925.pairs.v0")
+    output_pairs_fn = path.join("lists", "xitsonga.utd_pairs.list")
+    if not path.isfile(output_pairs_fn):
+        # Read voice activity regions
+        fa_fn = path.join("..", "data", "xitsonga.wrd")
+        print("Reading:", fa_fn)
+        vad_dict = utils.read_vad_from_fa(fa_fn)
+
+        # Create new pair list
+        utils.strip_nonvad_from_pairs(
+            vad_dict, input_pairs_fn, output_pairs_fn
+            )
+    else:
+        print("Using existing file:", output_pairs_fn)
+
+    # Create the UTD word list
+    list_fn = path.join("lists", "xitsonga.utd_terms.list")
+    if not path.isfile(list_fn):
+        utils.terms_from_pairs(output_pairs_fn, list_fn)
+    else:
+        print("Using existing file:", list_fn)
+
+    # Extract UTD segments from the MFCC NumPy archives
+    input_npz_fn = path.join(mfcc_dir, "xitsonga.dd.npz")
+    output_npz_fn = path.join(mfcc_dir, "xitsonga.utd.dd.npz")
+    if not path.isfile(output_npz_fn):
+        print("Extracting MFCCs for UTD word tokens")
         utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
     else:
         print("Using existing file:", output_npz_fn)
