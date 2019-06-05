@@ -70,8 +70,10 @@ in interactive mode with the mounted directories, run:
         py3_tf1.13
 
 Alternatively, run `./docker.sh`, which executes the above command and starts
-an interactive container. To directly start a Jupyter notebook in a container,
-run `./docker_notebook.sh`.
+an interactive container.
+
+To directly start a Jupyter notebook in a container, run `./docker_notebook.sh`
+and open `http://localhost:8889/`.
 
 
 If not using Docker: Install dependencies
