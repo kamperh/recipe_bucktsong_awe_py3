@@ -52,17 +52,17 @@ def extract_mfcc_dir(dir):
     for wav_fn in tqdm(sorted(glob.glob(path.join(dir, "*.wav")))):
         signal, sample_rate = librosa.core.load(wav_fn, sr=None)
         signal = preemphasis(signal, coeff=0.97)
-        # mfcc = librosa.feature.mfcc(
-        #     signal, sr=sample_rate, n_mfcc=13, n_mels=24, dct_type=3,
-        #     n_fft=int(np.floor(0.025*sample_rate)),
-        #     hop_length=int(np.floor(0.01*sample_rate)), fmin=64, fmax=8000,
-        #     htk=True
-        #     )
         mfcc = librosa.feature.mfcc(
-            signal, sr=sample_rate, n_mfcc=13,
+            signal, sr=sample_rate, n_mfcc=13, n_mels=24,  #dct_type=3,
             n_fft=int(np.floor(0.025*sample_rate)),
-            hop_length=int(np.floor(0.01*sample_rate))
+            hop_length=int(np.floor(0.01*sample_rate)), fmin=64, fmax=8000,
+            #htk=True
             )
+        # mfcc = librosa.feature.mfcc(
+        #     signal, sr=sample_rate, n_mfcc=13,
+        #     n_fft=int(np.floor(0.025*sample_rate)),
+        #     hop_length=int(np.floor(0.01*sample_rate))
+        #     )
         mfcc_delta = librosa.feature.delta(mfcc)
         mfcc_delta_delta = librosa.feature.delta(mfcc, order=2)
         # from python_speech_features import delta
