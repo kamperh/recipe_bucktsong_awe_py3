@@ -51,7 +51,7 @@ def extract_mfcc_dir(dir):
     feat_dict = {}
     for wav_fn in tqdm(sorted(glob.glob(path.join(dir, "*.wav")))):
         signal, sample_rate = librosa.core.load(wav_fn, sr=None)
-        # # signal = preemphasis(signal, coeff=0.97)
+        signal = preemphasis(signal, coeff=0.97)
         # mfcc = librosa.feature.mfcc(
         #     signal, sr=sample_rate, n_mfcc=13, n_mels=24, dct_type=3,
         #     n_fft=int(np.floor(0.025*sample_rate)),

@@ -56,7 +56,7 @@ installed separately (see below). To use the Docker image, you need to:
 To build the Docker image, run:
 
     cd docker
-    docker build -f Dockerfile.gpu -t py3.6_tf1.13 .
+    docker build -f Dockerfile.gpu -t py3_tf1.13 .
     cd ..
 
 The remaining steps in this recipe can be run in a container in interactive
@@ -67,7 +67,7 @@ in interactive mode with the mounted directories, run:
         -v /r2d2/backup/endgame/datasets/buckeye:/data/buckeye \
         -v /r2d2/backup/endgame/datasets/zrsc2015/xitsonga_wavs:/data/xitsonga_wavs \
         -v "$(pwd)":/home \
-        py3.6_tf1.13
+        py3_tf1.13
 
 Alternatively, run `./docker.sh`, which executes the above command and starts
 an interactive container. To directly start a Jupyter notebook in a container,
