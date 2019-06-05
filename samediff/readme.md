@@ -61,9 +61,8 @@ ZeroSpeech MFFCs:
 
 ZeroSpeech filterbanks:
 
-    # TO-DO
-    Average precision: 0.193150835418
-    Precision-recall breakeven: 0.261508627742
+Average precision: 0.19343299396
+Precision-recall breakeven: 0.262087947482
     
 Xitsonga MFFCs:
 
