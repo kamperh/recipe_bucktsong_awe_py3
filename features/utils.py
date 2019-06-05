@@ -371,3 +371,28 @@ def terms_from_pairs(pairs_fn, output_list_fn):
                 cluster + "_" + utt + "_" + "%06d" % start + "-" + "%06d" % end
                 + "\n"
                 )
+
+
+def pairs_for_speakers(speakers_fn, input_pairs_fn, output_pairs_fn):
+
+    print("Reading:", speakers_fn)
+    with open(speakers_fn) as f:
+        speakers = [line.strip() for line in f]
+
+    print("Reading:", input_pairs_fn)
+    print("Writing:", output_pairs_fn)
+    input_pairs_f = open(input_pairs_fn)
+    output_pairs_f = open(output_pairs_fn, "w")
+    n_total = 0
+    n_pairs = 0
+    for line in input_pairs_f:
+        _, utt1, _, _, utt2, _, _ = line.split()
+        n_total += 1
+        if utt1[:3] in speakers and utt2[:3] in speakers:
+            output_pairs_f.write(line)
+            n_pairs += 1
+    input_pairs_f.close()
+    output_pairs_f.close()
+    
+    print("Wrote", n_pairs, "out of", n_total, "pairs")
+

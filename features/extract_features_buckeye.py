@@ -171,6 +171,26 @@ def main():
 
     # Extract UTD segments from the MFCC NumPy archives
     for subset in ["devpart1"]:
+
+        # Extract pair and term list for speakers in subset
+        speaker_fn = path.join(
+            "..", "data", "buckeye_{}_speakers.list".format(subset)
+            )
+        input_pairs_fn = output_pairs_fn
+        output_pairs_fn = path.join("lists", "devpart1.utd_pairs.list")
+        if not path.isfile(output_pairs_fn):
+            utils.pairs_for_speakers(
+                speaker_fn, input_pairs_fn, output_pairs_fn
+                )
+        else:
+            print("Using existing file:", output_pairs_fn)
+        list_fn = path.join("lists", "devpart1.utd_terms.list")
+        if not path.isfile(list_fn):
+            utils.terms_from_pairs(output_pairs_fn, list_fn)
+        else:
+            print("Using existing file:", list_fn)
+
+        # Extract UTD segments
         input_npz_fn = path.join(mfcc_dir, subset + ".dd.npz")
         output_npz_fn = path.join(mfcc_dir, subset + ".utd.dd.npz")
         if not path.isfile(output_npz_fn):

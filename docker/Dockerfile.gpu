@@ -1,0 +1,38 @@
+# Docker image for Python 3.6 and TensorFlow 1.13.1
+# Herman Kamper, kamperh@gmail.com, 2019
+
+# Parent image
+FROM tensorflow/tensorflow:1.13.1-gpu-py3
+
+# Standard tools (Python 3.6)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        less \
+        nano \
+        git \
+        && \
+    python -m pip --no-cache-dir install --upgrade \
+        setuptools \
+        pip \
+        && \
+    python -m pip --no-cache-dir install --upgrade \
+        ipython \
+        jupyter \
+        Cython==0.29.7 \
+        librosa==0.6.3 \
+        matplotlib==3.0.3 \
+        nose==1.3.7 \
+        numpy==1.16.3 \
+        scikit-learn==0.21.1 \
+        scipy==1.3.0 \
+        tqdm==4.32.1
+
+# Install GitHub repositories
+RUN git clone https://github.com/kamperh/speech_dtw.git /src/speech_dtw/
+WORKDIR /src/speech_dtw
+RUN make
+RUN make test
+
+# Working directory
+WORKDIR /home
+CMD ["bash"]

@@ -37,35 +37,52 @@ from:
 
 From the complete Buckeye corpus we split off several subsets: the sets
 labelled as `devpart1` and `zs` respectively correspond to the `English1` and
-`English2` sets in [Kamper et al., 2016](http://arxiv.org/abs/1606.06950). More
-details of which speakers are found in which set is also given at the end of
-[features/readme.md](features/readme.md). We use the Xitsonga dataset provided
-as part of the Zero Speech Challenge 2015 (a subset of the NCHLT data).
+`English2` sets in [Kamper et al., 2016](http://arxiv.org/abs/1606.06950). We
+use the Xitsonga dataset provided as part of the Zero Speech Challenge 2015 (a
+subset of the NCHLT data).
 
 
-Create Docker container
------------------------
-**TODO: Add py3_tf1.13 Docker image. Rename section.**
+Create and run Docker image
+---------------------------
+This recipe provides a Docker image containing all the required dependencies.
+The recipe can be run without Docker, but then the dependencies need to be
+installed separately (see below). To use the Docker image, you need to:
+
+- Install [Docker](https://docs.docker.com/install/) and follow the [post
+  installation
+  steps](https://docs.docker.com/install/linux/linux-postinstall/).
+- Install [nvidia-docker](https://github.com/NVIDIA/nvidia-docker).
+
+To build the Docker image, run:
+
+    cd docker
+    docker build -f Dockerfile.gpu -t py3.6_tf1.13 .
+    cd ..
+
+The remaining steps in this recipe can be run in a container in interactive
+mode. The dataset directories will also need to be mounted. To run a container
+in interactive mode with the mounted directories, run:
+
+    docker run --runtime=nvidia -it --rm -p 8887:8887 \
+        -v /r2d2/backup/endgame/datasets/buckeye:/data/buckeye \
+        -v /r2d2/backup/endgame/datasets/zrsc2015/xitsonga_wavs:/data/xitsonga_wavs \
+        -v "$(pwd)":/home \
+        py3.6_tf1.13
+
+Alternatively, run `./docker.sh`, which executes the above command and starts
+an interactive container. To directly start a Jupyter notebook in a container,
+run `./docker_notebook.sh`.
 
 
 If not using Docker: Install dependencies
 -----------------------------------------
-If you are not using the Docker image, you will need to install the following
-dependencies:
+If you are not using Docker, install the following dependencies:
 
-- [Python 3](TO-DO)
-- librosa
-- TensorFlow (pip install tensorflow==1.13.1)
-- Jupyter
-- etc. TO-DO
-
-You can use the following steps to create a virtual environment and install
-these dependencies:
-
-    python3 -m venv ~/tools/py3_tf1.13
-    source ~/tools/py3_tf1.13/bin/activate
-    ./install_dependencies.sh  # TO-DO: Update requirements.txt
-
+- [Python 3](https://www.python.org/downloads/)
+- [TensorFlow 1.13.1](https://www.tensorflow.org/)
+- [LibROSA](http://librosa.github.io/librosa/)
+- [Cython](https://cython.org/)
+- [tqdm](https://tqdm.github.io/)
 
 
 Extract speech features
