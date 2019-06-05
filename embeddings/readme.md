@@ -17,7 +17,7 @@ Correspondence autoencoder
 Train an RNN-CAE on ground truth segments:
 
     # Buckeye
-    ./train_cae.py --cae_n_epochs 30 --train_tag gt  # HERE
+    ./train_cae.py --cae_n_epochs 30 --train_tag gt
 
 Evaluate the model:
 
@@ -31,7 +31,7 @@ Evaluate the model:
     ./apply_model.py \
         models/buckeye.mfcc.gt/train_cae/60a4a9619e/cae.best_val.ckpt test
     ./eval_samediff.py --mvn \
-        models/buckeye.mfcc.gt/train_cae/60a4a9619e/cae.best_val.test.npz  # HERE
+        models/buckeye.mfcc.gt/train_cae/60a4a9619e/cae.best_val.test.npz
 
 All the models trained below (including autoencoder and VAE models) can be
 evaluated using these scripts.
@@ -71,11 +71,11 @@ only with the AE pre-training step.
 
 Train an RNN-AE on ground truth segments:
 
-    ./train_cae.py --ae_batch_size 300 --train_tag gt2 --cae_n_epochs 0
+    ./train_cae.py --train_tag gt --cae_n_epochs 0
 
 Train an RNN-AE on random segments:
 
-    ./train_cae.py --train_tag rnd --ae_batch_size 300 --cae_n_epochs 0
+    ./train_cae.py --train_tag rnd --cae_n_epochs 0
 
 Train a RNN-AE on UTD segments:
 
@@ -86,17 +86,15 @@ Variational autoencoder
 -----------------------
 Train an RNN-VAE on ground truth segments:
 
-    ./train_vae.py --batch_size 500 --train_tag gt2
+    ./train_vae.py --train_tag gt
 
 Train an RNN-VAE on random segments:
 
-    # Buckeye
-    ./train_vae.py --batch_size 300 --train_tag rnd
+    ./train_vae.py --train_tag rnd
 
 Train an RNN-VAE on UTD segments:
 
-    # Buckeye
-    ./train_vae.py --batch_size 300 --train_tag utd
+    ./train_vae.py --train_tag utd
 
 
 Siamese model
@@ -199,7 +197,7 @@ Results (UTD):
 
 Sweep:
 
-    ./sweep.py --static_args "--train_tag gt2 --cae_n_epochs 0" \
+    ./sweep.py --static_args "--train_tag gt --cae_n_epochs 0" \
         --rnd_seed 1,2,3,4,5 train_cae &> models/train_ae.paper.sweep3
 
 Validation results:
@@ -241,7 +239,7 @@ Results:
 
 Sweep:
 
-    ./sweep.py --static_args "--train_tag gt2 --n_epochs 400" \
+    ./sweep.py --static_args "--train_tag gt --n_epochs 400" \
         --rnd_seed 1,2,3,4,5 train_vae &> models/train_vae.paper.sweep10
 
 Results:

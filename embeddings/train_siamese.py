@@ -12,7 +12,7 @@ from datetime import datetime
 from os import path
 from scipy.spatial.distance import pdist
 import argparse
-import cPickle as pickle
+import pickle
 import hashlib
 import numpy as np
 import os
