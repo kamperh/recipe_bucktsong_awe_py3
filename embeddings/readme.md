@@ -31,15 +31,14 @@ Evaluate the model:
     ./apply_model.py \
         models/buckeye.mfcc.gt/train_cae/60a4a9619e/cae.best_val.ckpt test
     ./eval_samediff.py --mvn \
-        models/buckeye.mfcc.gt/train_cae/60a4a9619e/cae.best_val.test.npz
+        models/buckeye.mfcc.gt/train_cae/60a4a9619e/cae.best_val.test.npz  # HERE
 
 All the models trained below (including autoencoder and VAE models) can be
 evaluated using these scripts.
 
 Analyse embeddings:
 
-    ./analyse_embeds.py --normalise 
-        --word_type \
+    ./analyse_embeds.py --normalise --word_type \
         because,yknow,people,something,anything,education,situation \
         models/buckeye.mfcc.utd/train_cae/e6f4584e05/cae.best_val.test.npz
 

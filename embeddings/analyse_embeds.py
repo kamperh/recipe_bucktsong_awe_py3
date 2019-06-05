@@ -33,7 +33,7 @@ def plot_raw_embeds(npz, types=None):
     labels = []
     for key in npz:
         if "_" in key:
-            label = "_".join(key.split("_")[:-2])
+            label = key.split("_")[0]
         else:
             label = key
         if types is None:
