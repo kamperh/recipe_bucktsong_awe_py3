@@ -141,7 +141,7 @@ Perform test-set evaluation on a sweep:
 Results: Buckeye
 ----------------
 
-### EncDec-CAE trained on ground truth segments:
+### RNN-CAE trained on ground truth segments:
 
 Sweep:
 
@@ -160,7 +160,7 @@ Test results (needs to be performed manually on each model and saved in
     Test AP mean: ?? (+- ??)
     Test AP with normalisation mean: ?? (+- ??)
 
-### EncDec-CAE trained on UTD segments:
+### RNN-CAE trained on UTD segments:
 
 Sweep:
 
@@ -175,7 +175,7 @@ Results:
     Test AP mean: ?? (+- ??)
     Test AP with normalisation mean: ?? (+- ??)
 
-### EncDec-CAE trained without initialising from EncDec-AE:
+### RNN-CAE trained without initialising from RNN-AE:
 
 Sweep:
 
@@ -196,7 +196,7 @@ Results (UTD):
     Validation AP mean: ?? (+- ??)
     Validation AP with normalisation mean: ?? (+- ??)
 
-### EncDec-AE trained on ground truth segments:
+### RNN-AE trained on ground truth segments:
 
 Sweep:
 
@@ -210,7 +210,7 @@ Validation results:
     Test AP mean: ?? (+- ??)
     Test AP with normalisation mean: ?? (+- ??)
 
-### EncDec-AE trained on random segments:
+### RNN-AE trained on random segments:
 
 Sweep:
 
@@ -224,7 +224,7 @@ Results:
     Test AP mean: ?? (+- ??)
     Test AP with normalisation mean: ?? (+- ??)
 
-### EncDec-AE trained on UTD segments:
+### RNN-AE trained on UTD segments:
 
 Sweep:
 
@@ -238,7 +238,7 @@ Results:
     Test AP mean: ?? (+- ??)
     Test AP with normalisation mean: ?? (+- ??)
 
-### EncDec-VAE trained on ground truth segments:
+### RNN-VAE trained on ground truth segments:
 
 Sweep:
 
@@ -250,7 +250,7 @@ Results:
     Validation AP mean: ?? (+- ??)
     Validation AP with normalisation mean: ?? (+- ??)
 
-### EncDec-VAE trained on random segments:
+### RNN-VAE trained on random segments:
 
 Sweep:
 
@@ -262,7 +262,7 @@ Results:
     Validation AP mean: ?? (+- ??)
     Validation AP with normalisation mean: ?? (+- ??)
 
-### EncDec-VAE trained on UTD segments:
+### RNN-VAE trained on UTD segments:
 
 Sweep:
 
@@ -280,7 +280,7 @@ Results:
 Results: Xitsonga
 -----------------
 
-### EncDec-CAE trained on UTD segments:
+### RNN-CAE trained on UTD segments:
 
 Sweep:
 
@@ -298,7 +298,7 @@ data as validation data during training without cheating, i.e. we always used
 the final model through `--extrinsic_usefinal`. This is also true for all the
 results below.
 
-### EncDec-AE trained on UTD segments:
+### RNN-AE trained on UTD segments:
 
 Sweep:
 
@@ -311,7 +311,7 @@ Test results:
     Test AP mean: ?? (+- ??)
     Test AP with normalisation mean: ?? (+- ??)
 
-### EncDec-VAE trained on UTD segments:
+### RNN-VAE trained on UTD segments:
 
 Sweep:
 
