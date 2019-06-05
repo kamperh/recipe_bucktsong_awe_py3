@@ -69,7 +69,7 @@ Evaluate and analyse downsampled MFCCs without deltas:
 Results
 -------
 Devpart2 downsampled MFCCs without deltas (dimensionality=130):
-
+    
     Average precision: 0.2434209747796554
     Precision-recall breakeven: 0.2854930304594734
 

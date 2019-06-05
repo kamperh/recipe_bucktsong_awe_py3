@@ -46,30 +46,35 @@ Results
 -------
 Devpart2 MFFCs:
 
-    Average precision: 0.37584813539810313
-    Precision-recall breakeven: 0.4042333505420754
+    Average precision: 0.3758481108
+    Precision-recall breakeven: 0.404233350542
 
 Devpart2 filterbanks:
 
+    # TO-DO
     Average precision: 0.192686800537
     Precision-recall breakeven: 0.256066081569
 
 ZeroSpeech MFFCs:
 
+    # TO-DO
     Average precision: 0.360448500146
     Precision-recall breakeven: 0.396221693982
 
 ZeroSpeech filterbanks:
 
+    # TO-DO
     Average precision: 0.193150835418
     Precision-recall breakeven: 0.261508627742
     
 Xitsonga MFFCs:
 
+    # TO-DO
     Average precision: 0.265691186512
     Precision-recall breakeven: 0.329374601376
 
 Xitsonga filterbanks:
 
+    # TO-DO
     Average precision: 0.12477363302
     Precision-recall breakeven: 0.20666915823

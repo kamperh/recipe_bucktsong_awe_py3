@@ -24,6 +24,7 @@ def extract_fbank_dir(dir):
     feat_dict = {}
     for wav_fn in tqdm(sorted(glob.glob(path.join(dir, "*.wav")))):
         signal, sample_rate = librosa.core.load(wav_fn, sr=None)
+        signal = preemphasis(signal, coeff=0.97)
         fbank = np.log(librosa.feature.melspectrogram(
             signal, sr=sample_rate, n_mels=40,
             n_fft=int(np.floor(0.025*sample_rate)),
