@@ -10,11 +10,9 @@ Details are given in:
 
 Author: Herman Kamper
 Contact: kamperh@gmail.com
-Date: 2014, 2015, 2018
+Date: 2014, 2015, 2018, 2019
 """
 
-from __future__ import division
-from __future__ import print_function
 from datetime import datetime
 from scipy.spatial.distance import pdist
 import argparse
