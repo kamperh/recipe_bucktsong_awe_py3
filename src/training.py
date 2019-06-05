@@ -75,7 +75,7 @@ def train_fixed_epochs(n_epochs, optimizer, train_loss_tensor,
             saver.restore(session, load_model_fn)
     
         # Train
-        for i_epoch in xrange(n_epochs):
+        for i_epoch in range(n_epochs):
             print("Epoch {}:".format(epoch_offset + i_epoch)),
             start_time = timeit.default_timer()
             
@@ -219,7 +219,7 @@ def train_fixed_epochs_external_val(n_epochs, optimizer, train_loss_tensor,
             saver.restore(session, load_model_fn)
     
         # Train
-        for i_epoch in xrange(n_epochs):
+        for i_epoch in range(n_epochs):
             print("Epoch {}:".format(epoch_offset + i_epoch)),
             start_time = timeit.default_timer()
             

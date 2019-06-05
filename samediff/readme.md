@@ -46,8 +46,8 @@ Results
 -------
 Devpart2 MFFCs:
 
-    Average precision: 0.369589218033
-    Precision-recall breakeven: 0.397548380274
+    Average precision: 0.37584813539810313
+    Precision-recall breakeven: 0.4042333505420754
 
 Devpart2 filterbanks:
 

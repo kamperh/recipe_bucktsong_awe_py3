@@ -70,16 +70,17 @@ Results
 -------
 Devpart2 downsampled MFCCs without deltas (dimensionality=130):
 
-    Average precision: 0.22061737340264037
-    Precision-recall breakeven: 0.2679401135776975
+    Average precision: 0.2434209747796554
+    Precision-recall breakeven: 0.2854930304594734
 
 ZeroSpeech downsampled MFCCs without deltas + mvn (dimensionality=130):
 
-    Average precision: 0.19394796913284967
-    Precision-recall breakeven: 0.2538620273479665
+    Average precision: 0.21282214281152606
+    Precision-recall breakeven: 0.2731139747278869
 
 Xitsonga downsampled MFCCs without deltas (dimensionality=130):
 
+    # TO-DO
     Average precision: 0.12970181712047946
     Precision-recall breakeven: 0.20233273934877694
 
