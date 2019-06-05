@@ -51,9 +51,8 @@ Devpart2 MFFCs:
 
 Devpart2 filterbanks:
 
-    # TO-DO
-    Average precision: 0.192686800537
-    Precision-recall breakeven: 0.256066081569
+    Average precision: 0.192112817171
+    Precision-recall breakeven: 0.256582343831
 
 ZeroSpeech MFFCs:
 
