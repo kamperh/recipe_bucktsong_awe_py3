@@ -460,7 +460,7 @@ def check_argv():
         default=default_options_dict["keep_prob"]
         )
     parser.add_argument(
-        "--train_tag", type=str, choices=["gt", "gt2", "utd", "rnd"],
+        "--train_tag", type=str, choices=["gt", "utd", "rnd"],
         help="training set tag (default: %(default)s)",
         default=default_options_dict["train_tag"]
         )
