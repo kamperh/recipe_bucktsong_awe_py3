@@ -136,7 +136,7 @@ def train_siamese(options_dict):
     npz_fn = path.join(
         options_dict["data_dir"], "train." + train_tag + ".npz"
         )
-    train_x, train_labels, train_lengths, train_keys = (
+    train_x, train_labels, train_lengths, train_keys, train_speakers = (
         data_io.load_data_from_npz(npz_fn, None)
         )
 
@@ -155,8 +155,8 @@ def train_siamese(options_dict):
         npz_fn = path.join(options_dict["data_dir"], "test.npz")
     else:
         npz_fn = path.join(options_dict["data_dir"], "val.npz")
-    val_x, val_labels, val_lengths, val_keys = data_io.load_data_from_npz(
-        npz_fn
+    val_x, val_labels, val_lengths, val_keys, val_speakers = (
+        data_io.load_data_from_npz(npz_fn)
         )
 
     # Truncate and limit dimensionality
