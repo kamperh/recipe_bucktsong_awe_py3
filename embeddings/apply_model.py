@@ -11,7 +11,7 @@ Date: 2018, 2019
 from datetime import datetime
 from os import path
 import argparse
-import cPickle as pickle
+import pickle
 import numpy as np
 import sys
 import tensorflow as tf
