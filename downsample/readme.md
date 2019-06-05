@@ -80,7 +80,5 @@ ZeroSpeech downsampled MFCCs without deltas + mvn (dimensionality=130):
 
 Xitsonga downsampled MFCCs without deltas (dimensionality=130):
 
-    # TO-DO
-    Average precision: 0.12970181712047946
-    Precision-recall breakeven: 0.20233273934877694
-
+    Average precision: 0.1132638941316873
+    Precision-recall breakeven: 0.1845537016037583
