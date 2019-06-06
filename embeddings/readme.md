@@ -77,7 +77,7 @@ only with the AE pre-training step.
 
 Train an RNN-AE on ground truth segments:
 
-    ./train_cae.py --train_tag gt --cae_n_epochs 0
+    ./train_cae.py --train_tag gt2 --cae_n_epochs 0
 
 Train an RNN-AE on random segments:
 
@@ -206,7 +206,7 @@ Results (UTD):
 
 Sweep:
 
-    ./sweep.py --static_args "--train_tag gt --cae_n_epochs 0" \
+    ./sweep.py --static_args "--train_tag gt2 --cae_n_epochs 0" \
         --rnd_seed 1,2,3,4,5 train_cae &> models/train_ae.paper.sweep1
 
 Validation results:
@@ -248,7 +248,7 @@ Results:
 
 Sweep:
 
-    ./sweep.py --static_args "--train_tag gt --n_epochs 400" \
+    ./sweep.py --static_args "--train_tag gt2 --n_epochs 400" \
         --rnd_seed 1,2,3,4,5 train_vae &> models/train_vae.paper.sweep10
 
 Results:
