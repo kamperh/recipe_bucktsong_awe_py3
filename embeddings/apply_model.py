@@ -87,7 +87,7 @@ def apply_model(model_fn, subset, language):
             x_data, options_dict["max_length"], True
             )
         x_data = np.transpose(x_data, (0, 2, 1))
-        x_data = train_x.reshape((-1, options_dict["d_in"]))
+        x_data = x_data.reshape((-1, options_dict["d_in"]))
 
         # Build model
         x = tf.placeholder(TF_DTYPE, [None, options_dict["d_in"]])
