@@ -148,14 +148,14 @@ Sweep:
 
 Validation results:
 
-    Validation AP mean: 0.4893 (+- 0.0119)
-    Validation AP with normalisation mean: 0.4894 (+- 0.0145)
+    Validation AP mean: ?? (+- ??)
+    Validation AP with normalisation mean: ?? (+- ??)
 
 Test results (needs to be performed manually on each model and saved in
 `test_ap.txt` in the model directory):
 
-    Test AP mean: 0.3450 (+- 0.0221)
-    Test AP with normalisation mean: 0.3455 (+- 0.0208)
+    Test AP mean: ?? (+- ??)
+    Test AP with normalisation mean: ?? (+- ??)
 
 ### RNN-CAE trained on UTD segments:
 

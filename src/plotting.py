@@ -106,7 +106,7 @@ def plot_raw_embeds(embed_dict, types=None, mvn=False, **kwargs):
     labels = []
     for key in embed_dict:
         if "_" in key:
-            label = "_".join(key.split("_")[:-2])
+            label = key.split("_")[0]
         else:
             label = key
         if types is None:
