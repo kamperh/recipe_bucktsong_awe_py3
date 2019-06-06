@@ -130,9 +130,12 @@ combining the different evaluations):
 
     ./analyse_sweep.py models/train_cae.sweep1
 
-Perform test-set evaluation on a sweep:
+Perform test set evaluation on a sweep:
 
     ./test_sweep.py models/train_cae.sweep1
+
+After running `test_sweep.py`, `analyse_sweep.py` can be run again to also
+include the test set analysis.
 
 
 Results: Buckeye
@@ -148,14 +151,14 @@ Sweep:
 
 Validation results:
 
-    Validation AP mean: ?? (+- ??)
-    Validation AP with normalisation mean: ?? (+- ??)
+    Validation AP mean: 0.4893 (+- 0.0119)
+    Validation AP with normalisation mean: 0.4894 (+- 0.0145)
 
-Test results (needs to be performed manually on each model and saved in
-`test_ap.txt` in the model directory):
+Test results (need to run `test_sweep.py` and then `analyse_sweep.py`, as
+explained above):
 
-    Test AP mean: ?? (+- ??)
-    Test AP with normalisation mean: ?? (+- ??)
+    Test AP mean: 0.5212 (+- 0.0081)
+    Test AP with normalisation mean: 0.5245 (+- 0.0113)
 
 ### RNN-CAE trained on UTD segments:
 
@@ -167,10 +170,10 @@ Sweep:
 
 Results:
 
-    Validation AP mean: ?? (+- ??)
-    Validation AP with normalisation mean: ?? (+- ??)
-    Test AP mean: ?? (+- ??)
-    Test AP with normalisation mean: ?? (+- ??)
+    Validation AP mean: 0.2979 (+- 0.0133)
+    Validation AP with normalisation mean: 0.3262 (+- 0.0048)
+    Test AP mean: 0.2922 (+- 0.0145)
+    Test AP with normalisation mean: 0.3268 (+- 0.0052)
 
 ### RNN-CAE trained without initialising from RNN-AE:
 
@@ -185,8 +188,8 @@ Sweep:
 
 Results (ground truth):
 
-    Validation AP mean: ?? (+- ??)
-    Validation AP with normalisation mean: ?? (+- ??)
+    Validation AP mean: 0.4381 (+- 0.0079)
+    Validation AP with normalisation mean: 0.4443 (+- 0.0049)
 
 Results (UTD):
 
