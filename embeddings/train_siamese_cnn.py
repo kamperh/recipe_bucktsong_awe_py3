@@ -35,18 +35,23 @@ import training
 
 default_options_dict = {
         "data_dir": path.join("data", "buckeye.mfcc"),
-        "train_tag": "gt",                  # "gt", "gt2", "utd"
+        "train_tag": "gt2",                  # "gt", "gt2", "utd"
         "max_length": 101,
-
-        "rnn_n_hiddens": [400, 400, 400],
-        "ff_n_hiddens": [130],              # embedding dimensionality
-        "margin": 0.2,
+        "filter_shapes": [
+            [39, 8, 1, 64],
+            [1, 6, 64, 256],
+            [1, 5, 256, 1024]
+            ],
+        "pool_shapes": [
+            [1, 2],
+            [1, 2],
+            [1, 17]
+            ],
+        "ff_n_hiddens": [1024, 130],       # last (embedding) layer is linear
+        "margin": 0.25,
+        "n_epochs": 150,
         "learning_rate": 0.001,
-        "rnn_keep_prob": 1.0,
-        "ff_keep_prob": 1.0,
-        "n_epochs": 10,
-        "batch_size": 300,
-        "n_buckets": 3,
+        "batch_size": 600,
         "extrinsic_usefinal": False,        # if True, during final extrinsic
                                             # evaluation, the final saved model
                                             # will be used (instead of the
@@ -61,45 +66,34 @@ default_options_dict = {
 #                              TRAINING FUNCTIONS                             #
 #-----------------------------------------------------------------------------#
 
-def build_siamese_rnn_side(x, x_lengths, rnn_n_hiddens, ff_n_hiddens,
-        rnn_type="lstm", rnn_keep_prob=1.0, ff_keep_prob=1.0,
-        bidirectional=False):
+def build_siamese_cnn_side(x, input_shape, filter_shapes, pool_shapes,
+        ff_n_hiddens, ff_keep_prob=1.0):
     """
-    Multi-layer RNN serving as one side of a Siamese model.
+    CNN serving as one side of a Siamese model.
+    
+    See `tflego.build_cnn` for more details on the parameters.
 
     Parameters
     ----------
-    x : Tensor [n_data, maxlength, d_in]
+    x : Tensor [n_data, n_input]
+        Input to the CNN, which is reshaped to match `input_shape`.
+    input_shape : list
+        The shape of the input to the CNN as [n_data, height, width, d_in].
     """
-
-    if bidirectional:
-        rnn_outputs, rnn_states = tflego.build_bidirectional_multi_rnn(
-            x, x_lengths, rnn_n_hiddens, rnn_type=rnn_type,
-            keep_prob=rnn_keep_prob
-            )
-    else:
-        rnn_outputs, rnn_states = tflego.build_multi_rnn(
-            x, x_lengths, rnn_n_hiddens, rnn_type=rnn_type,
-            keep_prob=rnn_keep_prob
-            )
-    if rnn_type == "lstm":
-        rnn_states = rnn_states.h
-    rnn = tflego.build_feedforward(
-        rnn_states, ff_n_hiddens, keep_prob=ff_keep_prob
-        )
-    return rnn
+    cnn = tflego.build_cnn(x, input_shape, filter_shapes, pool_shapes, padding="VALID")
+    cnn = tf.contrib.layers.flatten(cnn)
+    cnn = tflego.build_feedforward(cnn, ff_n_hiddens, keep_prob=ff_keep_prob)
+    return cnn
 
 
-def build_siamese_from_options_dict(x, x_lengths, options_dict):
+def build_siamese_cnn_from_options_dict(x, options_dict):
     network_dict = {}
-    rnn = build_siamese_rnn_side(
-        x, x_lengths, options_dict["rnn_n_hiddens"],
-        options_dict["ff_n_hiddens"], options_dict["rnn_type"],
-        options_dict["rnn_keep_prob"], options_dict["ff_keep_prob"],
-        options_dict["bidirectional"]
+    cnn = build_siamese_cnn_side(
+        x, options_dict["input_shape"], options_dict["filter_shapes"],
+        options_dict["pool_shapes"], options_dict["ff_n_hiddens"]
         )
-    rnn = tf.nn.l2_normalize(rnn, axis=1)
-    network_dict["output"] = rnn
+    cnn = tf.nn.l2_normalize(cnn, axis=1)
+    network_dict["output"] = cnn
     return network_dict
 
 
