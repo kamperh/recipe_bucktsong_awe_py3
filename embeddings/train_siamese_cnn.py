@@ -35,7 +35,7 @@ import training
 
 default_options_dict = {
         "data_dir": path.join("data", "buckeye.mfcc"),
-        "train_tag": "gt",                  # "gt", "gt2", "utd"
+        "train_tag": "gt2",                  # "gt", "gt2", "utd"
         "max_length": 101,
         "filter_shapes": [
             [39, 8, 1, 64],
@@ -49,7 +49,7 @@ default_options_dict = {
             ],
         "ff_n_hiddens": [1024, 130],       # last (embedding) layer is linear
         "margin": 0.25,
-        "n_epochs": 150,
+        "n_epochs": 250,
         "learning_rate": 0.001,
         "batch_size": 600,
         "extrinsic_usefinal": False,        # if True, during final extrinsic
@@ -318,6 +318,12 @@ def check_argv():
         "--batch_size", type=int,
         help="size of mini-batch (default: %(default)s)",
         default=default_options_dict["batch_size"]
+        )
+    parser.add_argument(
+        "--n_val_interval", type=int,
+        help="number of epochs in between external validation "
+        "(default: %(default)s)",
+        default=default_options_dict["n_val_interval"]
         )
     parser.add_argument(
         "--train_tag", type=str, choices=["gt", "gt2", "utd", "rnd"],
