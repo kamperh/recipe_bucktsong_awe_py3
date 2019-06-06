@@ -74,33 +74,39 @@ def apply_model(model_fn, subset, language):
         npz_fn
         )
 
-    # Truncate and limit dimensionality
-    data_io.trunc_and_limit_dim(
-        x_data, lengths, options_dict["n_input"], options_dict["max_length"]
-        )
+    if "cnn" in options_dict["script"]:
 
-    # Build model
-    x = tf.placeholder(TF_DTYPE, [None, None, options_dict["n_input"]])
-    x_lengths = tf.placeholder(TF_ITYPE, [None])
-    model = build_model(x, x_lengths, options_dict)
+        pass
 
-    # Embed data
-    batch_iterator = batching.SimpleIterator(x_data, len(x_data), False)
-    saver = tf.train.Saver()
-    with tf.Session() as session:
-        saver.restore(session, model_fn)
-        for batch_x_padded, batch_x_lengths in batch_iterator:
-            np_x = batch_x_padded
-            np_x_lengths = batch_x_lengths
-            np_z = session.run(
-                [model["encoding"]], feed_dict={x: np_x, x_lengths:
-                np_x_lengths}
-                )[0]
-            break  # single batch
+    else:  # rnn
+        
+        # Truncate and limit dimensionality
+        data_io.trunc_and_limit_dim(
+            x_data, lengths, options_dict["n_input"], options_dict["max_length"]
+            )
 
-    embed_dict = {}
-    for i, utt_key in enumerate([keys[i] for i in batch_iterator.indices]):
-        embed_dict[utt_key] = np_z[i]
+        # Build model
+        x = tf.placeholder(TF_DTYPE, [None, None, options_dict["n_input"]])
+        x_lengths = tf.placeholder(TF_ITYPE, [None])
+        model = build_model(x, x_lengths, options_dict)
+
+        # Embed data
+        batch_iterator = batching.SimpleIterator(x_data, len(x_data), False)
+        saver = tf.train.Saver()
+        with tf.Session() as session:
+            saver.restore(session, model_fn)
+            for batch_x_padded, batch_x_lengths in batch_iterator:
+                np_x = batch_x_padded
+                np_x_lengths = batch_x_lengths
+                np_z = session.run(
+                    [model["encoding"]], feed_dict={x: np_x, x_lengths:
+                    np_x_lengths}
+                    )[0]
+                break  # single batch
+
+        embed_dict = {}
+        for i, utt_key in enumerate([keys[i] for i in batch_iterator.indices]):
+            embed_dict[utt_key] = np_z[i]
 
     return embed_dict
 

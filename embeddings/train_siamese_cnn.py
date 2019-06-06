@@ -155,12 +155,8 @@ def train_siamese_cnn(options_dict):
     # Zero-pad sequences
     max_length = options_dict["max_length"]
     print("Limiting length:", max_length)
-    train_x, _ = data_io.pad_sequences(
-        train_x, max_length, True
-        )
-    val_x, _ = data_io.pad_sequences(
-        val_x, max_length, True
-        )
+    train_x, _ = data_io.pad_sequences(train_x, max_length, True)
+    val_x, _ = data_io.pad_sequences(val_x, max_length, True)
     train_x = np.transpose(train_x, (0, 2, 1))
     val_x = np.transpose(val_x, (0, 2, 1))
     
@@ -358,7 +354,7 @@ def main():
 
     # Set options
     options_dict = default_options_dict.copy()
-    options_dict["script"] = "train_siamese"
+    options_dict["script"] = "train_siamese_cnn"
     options_dict["data_dir"] = args.data_dir
     options_dict["n_epochs"] = args.n_epochs
     options_dict["batch_size"] = args.batch_size
