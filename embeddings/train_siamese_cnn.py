@@ -364,6 +364,7 @@ def main():
     options_dict["data_dir"] = args.data_dir
     options_dict["n_epochs"] = args.n_epochs
     options_dict["batch_size"] = args.batch_size
+    options_dict["n_val_interval"] = args.n_val_interval
     options_dict["extrinsic_usefinal"] = args.extrinsic_usefinal
     options_dict["use_test_for_val"] = args.use_test_for_val
     options_dict["train_tag"] = args.train_tag
