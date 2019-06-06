@@ -3,12 +3,17 @@ Data input and output functions.
 
 Author: Herman Kamper
 Contact: kamperh@gmail.com
-Date: 2018
+Date: 2018, 2019
 """
 
-from __future__ import division
-from __future__ import print_function
+from os import path
 import numpy as np
+import sys
+
+sys.path.append(path.join("..", "src"))
+
+from tflego import NP_DTYPE
+
 
 
 def load_data_from_npz(npz_fn, min_length=None):
@@ -40,3 +45,24 @@ def trunc_and_limit_dim(x, lengths, d_frame, max_length):
     for i, seq in enumerate(x):
         x[i] = x[i][:max_length, :d_frame]
         lengths[i] = min(lengths[i], max_length)
+
+
+def pad_sequences(x, n_padded, center_padded=True):
+    """Return the padded sequences and their original lengths."""
+    padded_x = np.zeros((len(x), n_padded, x[0].shape[1]), dtype=NP_DTYPE)
+    lengths = []
+    for i_data, cur_x in enumerate(x):
+        length = cur_x.shape[0]
+        if center_padded:
+            padding = int(np.round((n_padded - length) / 2.))
+            if length <= n_padded:
+                padded_x[i_data, padding:padding + length, :] = cur_x
+            else:
+                # Cut out snippet from sequence exceeding n_padded
+                padded_x[i_data, :, :] = cur_x[-padding:-padding + n_padded]
+            lengths.append(min(length, n_padded))
+        else:
+            length = min(length, n_padded)
+            padded_x[i_data, :length, :] = cur_x[:length, :]
+            lengths.append(length)
+    return padded_x, lengths

@@ -96,9 +96,6 @@ def apply_model(model_fn, subset, language):
                 [model["encoding"]], feed_dict={x: np_x, x_lengths:
                 np_x_lengths}
                 )[0]
-            # np_y = session.run(
-            #     [y], feed_dict={a: np_x, a_lengths: np_x_lengths, b_lengths: np_x_lengths}
-            #     )[0]
             break  # single batch
 
     embed_dict = {}

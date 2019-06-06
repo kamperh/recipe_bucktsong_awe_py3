@@ -35,7 +35,7 @@ import training
 
 default_options_dict = {
         "data_dir": path.join("data", "buckeye.mfcc"),
-        "train_tag": "gt2",                  # "gt", "gt2", "utd"
+        "train_tag": "gt",                  # "gt", "gt2", "utd"
         "max_length": 101,
         "filter_shapes": [
             [39, 8, 1, 64],
@@ -133,8 +133,6 @@ def train_siamese_cnn(options_dict):
         data_io.load_data_from_npz(npz_fn, None)
         )
 
-    assert False
-
     # Convert training labels to integers
     train_label_set = list(set(train_labels))
     label_to_id = {}
@@ -154,14 +152,36 @@ def train_siamese_cnn(options_dict):
         data_io.load_data_from_npz(npz_fn)
         )
 
-    # Truncate and limit dimensionality
+    # Zero-pad sequences
     max_length = options_dict["max_length"]
-    d_frame = 13  # None
-    options_dict["n_input"] = d_frame
-    print("Limiting dimensionality:", d_frame)
     print("Limiting length:", max_length)
-    data_io.trunc_and_limit_dim(train_x, train_lengths, d_frame, max_length)
-    data_io.trunc_and_limit_dim(val_x, val_lengths, d_frame, max_length)
+    train_x, _ = data_io.pad_sequences(
+        train_x, max_length, True
+        )
+    val_x, _ = data_io.pad_sequences(
+        val_x, max_length, True
+        )
+    train_x = np.transpose(train_x, (0, 2, 1))
+    val_x = np.transpose(val_x, (0, 2, 1))
+    
+    # Dimensionalities
+    d_in = train_x.shape[1]*train_x.shape[2]
+    input_shape = [-1, train_x.shape[1], train_x.shape[2], 1] 
+    # [n_data, height, width, channels]
+    options_dict["d_in"] = d_in
+    options_dict["input_shape"] = input_shape
+
+    # Flatten data
+    train_x = train_x.reshape((-1, d_in))
+    val_x = val_x.reshape((-1, d_in))
+
+    # # Truncate and limit dimensionality
+    # d_frame = 13  # None
+    # options_dict["n_input"] = d_frame
+    # print("Limiting dimensionality:", d_frame)
+    # print("Limiting length:", max_length)
+    # data_io.trunc_and_limit_dim(train_x, train_lengths, d_frame, max_length)
+    # data_io.trunc_and_limit_dim(val_x, val_lengths, d_frame, max_length)
 
 
     # DEFINE MODEL
@@ -170,14 +190,13 @@ def train_siamese_cnn(options_dict):
     print("Building model")
 
     # Model filenames
-    intermediate_model_fn = path.join(model_dir, "siamese.tmp.ckpt")
-    model_fn = path.join(model_dir, "siamese.best_val.ckpt")
+    intermediate_model_fn = path.join(model_dir, "siamese_cnn.tmp.ckpt")
+    model_fn = path.join(model_dir, "siamese_cnn.best_val.ckpt")
 
     # Model graph
-    x = tf.placeholder(TF_DTYPE, [None, None, options_dict["n_input"]])
-    x_lengths = tf.placeholder(TF_ITYPE, [None])
+    x = tf.placeholder(TF_DTYPE, [None, d_in])
     y = tf.placeholder(TF_ITYPE, [None])
-    network_dict = build_siamese_from_options_dict(x, x_lengths, options_dict)
+    network_dict = build_siamese_cnn_from_options_dict(x, options_dict)
     output = network_dict["output"]
 
     # Semi-hard triplets loss
@@ -198,16 +217,16 @@ def train_siamese_cnn(options_dict):
     def samediff_val(normalise=False):
         # Embed validation
         np.random.seed(options_dict["rnd_seed"])
-        val_batch_iterator = batching.SimpleIterator(val_x, len(val_x), False)
+        val_batch_iterator = batching.LabelledNopaddingIterator(
+            val_x, None, val_x.shape[0], False
+            )
         labels = [val_labels[i] for i in val_batch_iterator.indices]
         saver = tf.train.Saver()
         with tf.Session() as session:
             saver.restore(session, val_model_fn)
-            for batch_x_padded, batch_x_lengths in val_batch_iterator:
-                np_x = batch_x_padded
-                np_x_lengths = batch_x_lengths
+            for batch_x in val_batch_iterator:
                 np_z = session.run(
-                    [output], feed_dict={x: np_x, x_lengths: np_x_lengths}
+                    [output], feed_dict={x: batch_x}
                     )[0]
                 break  # single batch
 
@@ -232,18 +251,17 @@ def train_siamese_cnn(options_dict):
                 )    
         return [prb, -ap]
 
-    # Train Siamese model
+    # Train Siamese CNN model
     val_model_fn = intermediate_model_fn
-    train_batch_iterator = batching.LabelledBucketIterator(
-        train_x, train_y, options_dict["batch_size"],
-        n_buckets=options_dict["n_buckets"], shuffle_every_epoch=True
+    train_batch_iterator = batching.LabelledNopaddingIterator(
+        train_x, train_y, options_dict["batch_size"], shuffle_every_epoch=True
         )
     record_dict = training.train_fixed_epochs_external_val(
         options_dict["n_epochs"], optimizer, loss, train_batch_iterator, [x,
-        x_lengths, y], samediff_val, save_model_fn=intermediate_model_fn,
-        save_best_val_model_fn=model_fn,
-        n_val_interval=options_dict["n_val_interval"]
-        )
+         y], samediff_val, save_model_fn=intermediate_model_fn,
+         save_best_val_model_fn=model_fn,
+         n_val_interval=options_dict["n_val_interval"]
+         )
 
     # Save record
     record_dict_fn = path.join(model_dir, "record_dict.pkl")
@@ -350,7 +368,7 @@ def main():
     options_dict["rnd_seed"] = args.rnd_seed
 
     # Train model
-    train_siamese(options_dict)    
+    train_siamese_cnn(options_dict)    
 
 
 if __name__ == "__main__":

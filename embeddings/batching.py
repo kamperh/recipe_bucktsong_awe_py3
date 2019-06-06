@@ -341,6 +341,39 @@ class LabelledBucketIterator(object):
             yield (batch_x_padded, batch_x_lengths, batch_y)
 
 
+class LabelledNopaddingIterator(object):
+    """
+    Iterator without bucketing or padding but with labels.
+    
+    If `y_vec` is set to None, no labels are yielded.
+    """
+    
+    def __init__(self, x_mat, y_vec, batch_size, shuffle_every_epoch=False):
+        self.x_mat = x_mat
+        self.y_vec = y_vec
+        self.batch_size = batch_size
+        self.shuffle_every_epoch = shuffle_every_epoch
+        self.n_batches = int(np.floor(x_mat.shape[0]/batch_size))
+        self.indices = np.arange(x_mat.shape[0])
+        self.shuffle()
+    
+    def shuffle(self):
+        np.random.shuffle(self.indices)
+    
+    def __iter__(self):
+        if self.shuffle_every_epoch:
+            self.shuffle()
+        for i_batch in range(self.n_batches):
+            batch_indices = self.indices[
+                i_batch*self.batch_size:(i_batch + 1)*self.batch_size
+                ]
+            if self.y_vec is None:
+                yield (self.x_mat[batch_indices])
+            else:
+                yield (self.x_mat[batch_indices], self.y_vec[batch_indices])
+
+
+
 #-----------------------------------------------------------------------------#
 #                              UTILITY FUNCTIONS                              #
 #-----------------------------------------------------------------------------#
