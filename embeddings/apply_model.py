@@ -83,10 +83,10 @@ def apply_model(model_fn, subset, language):
     if "cnn" in options_dict["script"]:
 
         # Pad and flatten data
-        x_data = np.transpose(x_data, (0, 2, 1))
         x_data, _ = data_io.pad_sequences(
             x_data, options_dict["max_length"], True
             )
+        x_data = np.transpose(x_data, (0, 2, 1))
         x_data = train_x.reshape((-1, options_dict["d_in"]))
 
         # Build model
