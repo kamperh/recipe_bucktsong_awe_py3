@@ -49,6 +49,12 @@ def build_model(x, x_lengths, options_dict):
             x, x_lengths, options_dict
             )
         model_dict["encoding"] = siamese["output"]
+    elif options_dict["script"] == "train_siamese_cnn":
+        import train_siamese_cnn
+        siamese = train_siamese_cnn.build_siamese_cnn_from_options_dict(
+            x, options_dict
+            )
+        model_dict["encoding"] = siamese["output"]
     return model_dict
 
 
@@ -76,7 +82,28 @@ def apply_model(model_fn, subset, language):
 
     if "cnn" in options_dict["script"]:
 
-        pass
+        # Pad and flatten data
+        x_data = np.transpose(x_data, (0, 2, 1))
+        x_data, _ = data_io.pad_sequences(
+            x_data, options_dict["max_length"], True
+            )
+        x_data = train_x.reshape((-1, options_dict["d_in"]))
+
+        # Build model
+        x = tf.placeholder(TF_DTYPE, [None, options_dict["d_in"]])
+        model = build_model(x, None, options_dict)
+
+        # Embed data
+        batch_iterator = batching.LabelledNopaddingIterator(
+            x_data, None, x_data.shape[0], False
+            )
+        saver = tf.train.Saver()
+        with tf.Session() as session:
+            saver.restore(session, model_fn)
+            for batch_x in batch_iterator:
+                np_z = session.run(
+                    [model["encoding"]], feed_dict={x: batch_x})[0]
+                break  # single batch
 
     else:  # rnn
         
@@ -104,9 +131,9 @@ def apply_model(model_fn, subset, language):
                     )[0]
                 break  # single batch
 
-        embed_dict = {}
-        for i, utt_key in enumerate([keys[i] for i in batch_iterator.indices]):
-            embed_dict[utt_key] = np_z[i]
+    embed_dict = {}
+    for i, utt_key in enumerate([keys[i] for i in batch_iterator.indices]):
+        embed_dict[utt_key] = np_z[i]
 
     return embed_dict
 
