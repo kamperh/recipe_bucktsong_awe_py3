@@ -105,13 +105,12 @@ Train an RNN-VAE on UTD segments:
 
 Siamese model
 -------------
-Train a Siamese model on ground segments:
+Train a Siamese model on ground truth segments:
 
     ./train_siamese.py --n_epochs 50 --train_tag gt
 
 Evaluate the model:
 
-    # Validation
     ./apply_model.py \
         models/buckeye.mfcc.gt/train_siamese/c95c82710c/siamese.best_val.ckpt val
     ./eval_samediff.py --mvn \
@@ -121,6 +120,25 @@ This gives the results:
 
     Average precision: ?? # TO-DO
     Precision-recall breakeven: ?? # TO-DO
+
+
+Siamese CNN
+-----------
+Train a Siamese CNN on ground truth segments:
+
+    ./train_siamese_cnn.py --n_epochs 150 --train_tag gt2 --n_val_interval 5
+
+Evaluate the model:
+
+    ./apply_model.py \
+        models/buckeye.mfcc.gt2/train_siamese_cnn/85116c3501/siamese_cnn.best_val.ckpt val
+    ./eval_samediff.py --mvn \
+        models/buckeye.mfcc.gt2/train_siamese_cnn/85116c3501/siamese_cnn.best_val.val.npz
+
+This gives the results:
+
+    Average precision: 0.6418
+    Precision-recall breakeven: 0.6131
 
 
 Sweeping across models
