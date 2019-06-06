@@ -147,7 +147,7 @@ Sweep:
 
     ./sweep.py --static_args \
         "--cae_n_epochs 30 --train_tag gt --pretrain_usefinal" \
-        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep1  # HERE
+        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep1
 
 Validation results:
 
@@ -181,7 +181,7 @@ Sweep:
 
     ./sweep.py --static_args \
         "--cae_n_epochs 150 --train_tag gt --ae_n_epochs 0" \
-        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep3
+        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep3  # HERE
     ./sweep.py --static_args \
         "--cae_n_epochs 150 --train_tag utd --ae_n_epochs 0" \
         --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep4
