@@ -233,7 +233,8 @@ def build_maxpool2d(x, pool_shape, padding="VALID", name=None):
         )
 
 
-def build_cnn(x, input_shape, filter_shapes, pool_shapes, padding="VALID"):
+def build_cnn(x, input_shape, filter_shapes, pool_shapes, padding="VALID",
+        return_shapes=True):
     """
     Build a convolutional neural network (CNN).
     
@@ -263,21 +264,27 @@ def build_cnn(x, input_shape, filter_shapes, pool_shapes, padding="VALID"):
     pool_shape : list of list
         The pool shape of each layer as [height, width]. If None, then no
         pooling is applied.
+    return_shapes : bool
+        If True, a list of list of shapes in the order of the layers are
+        additionally returned.
     """
     assert len(filter_shapes) == len(pool_shapes)
     x = tf.reshape(x, input_shape)
     cnn = x
+    layer_shapes
     for i_layer, (filter_shape, pool_shape) in enumerate(
             zip(filter_shapes, pool_shapes)):
         with tf.variable_scope("cnn_layer_{}".format(i_layer)):
             cnn = build_conv2d_relu(cnn, filter_shape, padding=padding)
             if pool_shape is not None:
                 cnn = build_maxpool2d(cnn, pool_shape, padding=padding)
-            print(
-                "CNN layer {} shape: {}".format(i_layer,
-                cnn.get_shape().as_list())
-                )
-    return cnn
+            shape = cnn.get_shape().as_list()
+            layer_shapes.append(shape)
+            print("CNN layer {} shape: {}".format(i_layer, shape))
+    if return_shapes:
+        return cnn, layer_shapes
+    else:
+        return cnn
 
 
 #-----------------------------------------------------------------------------#
@@ -294,8 +301,8 @@ def get_conv2d_transpose_output_shape(input_shape, filter_shape, stride=1):
     ----------
     input_shape : list
         The shape of the input to the CNN as [n_data, height, width, d_in].
-    filter_shape : list of list
-        The filter shape of each layer as [height, width, d_out, d_in].
+    filter_shape : list
+        The filter shape of as [height, width, d_out, d_in].
     """
     input_height = input_shape[1]
     input_width = input_shape[2]
@@ -307,7 +314,14 @@ def get_conv2d_transpose_output_shape(input_shape, filter_shape, stride=1):
 
 
 def build_conv2d_transpose(x, filter_shape, stride=1, activation=tf.nn.relu):
-    """Single transposed convolutional layer."""
+    """
+    Single transposed convolutional layer.
+
+    Parameters
+    ----------
+    filter_shape : list
+        The filter shape of as [height, width, d_out, d_in].
+    """
     W = tf.get_variable(
         "W", filter_shape, dtype=TF_DTYPE,
         initializer=tf.contrib.layers.xavier_initializer()
