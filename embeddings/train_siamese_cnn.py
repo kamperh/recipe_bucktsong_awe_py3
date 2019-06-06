@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Train a CNN Siamese triplets network.
+Train a Siamese CNN triplets network.
 
 Author: Herman Kamper
 Contact: kamperh@gmail.com
@@ -97,8 +97,8 @@ def build_siamese_cnn_from_options_dict(x, options_dict):
     return network_dict
 
 
-def train_siamese(options_dict):
-    """Train and save a Siamese triplets model."""
+def train_siamese_cnn(options_dict):
+    """Train and save a Siamese CNN triplets network."""
 
     # PRELIMINARY
 
@@ -132,6 +132,8 @@ def train_siamese(options_dict):
     train_x, train_labels, train_lengths, train_keys, train_speakers = (
         data_io.load_data_from_npz(npz_fn, None)
         )
+
+    assert False
 
     # Convert training labels to integers
     train_label_set = list(set(train_labels))
