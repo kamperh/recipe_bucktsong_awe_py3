@@ -271,7 +271,7 @@ def build_cnn(x, input_shape, filter_shapes, pool_shapes, padding="VALID",
     assert len(filter_shapes) == len(pool_shapes)
     x = tf.reshape(x, input_shape)
     cnn = x
-    layer_shapes
+    layer_shapes = []
     for i_layer, (filter_shape, pool_shape) in enumerate(
             zip(filter_shapes, pool_shapes)):
         with tf.variable_scope("cnn_layer_{}".format(i_layer)):
