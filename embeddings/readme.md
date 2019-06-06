@@ -144,18 +144,18 @@ Sweep:
 
     ./sweep.py --static_args \
         "--cae_n_epochs 30 --train_tag gt --pretrain_usefinal" \
-        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep15
+        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep1  # HERE
 
 Validation results:
 
-    Validation AP mean: ?? (+- ??)
-    Validation AP with normalisation mean: ?? (+- ??)
+    Validation AP mean: 0.4893 (+- 0.0119)
+    Validation AP with normalisation mean: 0.4894 (+- 0.0145)
 
 Test results (needs to be performed manually on each model and saved in
 `test_ap.txt` in the model directory):
 
-    Test AP mean: ?? (+- ??)
-    Test AP with normalisation mean: ?? (+- ??)
+    Test AP mean: 0.3450 (+- 0.0221)
+    Test AP with normalisation mean: 0.3455 (+- 0.0208)
 
 ### RNN-CAE trained on UTD segments:
 
@@ -163,7 +163,7 @@ Sweep:
 
     ./sweep.py --static_args \
         "--cae_n_epochs 10 --train_tag utd --pretrain_usefinal" \
-        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep16
+        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep2
 
 Results:
 
@@ -178,10 +178,10 @@ Sweep:
 
     ./sweep.py --static_args \
         "--cae_n_epochs 150 --train_tag gt --ae_n_epochs 0" \
-        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep17
+        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep3
     ./sweep.py --static_args \
         "--cae_n_epochs 150 --train_tag utd --ae_n_epochs 0" \
-        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep18
+        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep4
 
 Results (ground truth):
 
@@ -198,7 +198,7 @@ Results (UTD):
 Sweep:
 
     ./sweep.py --static_args "--train_tag gt --cae_n_epochs 0" \
-        --rnd_seed 1,2,3,4,5 train_cae &> models/train_ae.paper.sweep3
+        --rnd_seed 1,2,3,4,5 train_cae &> models/train_ae.paper.sweep1
 
 Validation results:
 
@@ -212,7 +212,7 @@ Validation results:
 Sweep:
 
     ./sweep.py --static_args "--train_tag rnd --cae_n_epochs 0" \
-        --rnd_seed 1,2,3,4,5 train_cae &> models/train_ae.paper.sweep4
+        --rnd_seed 1,2,3,4,5 train_cae &> models/train_ae.paper.sweep2
 
 Results:
 

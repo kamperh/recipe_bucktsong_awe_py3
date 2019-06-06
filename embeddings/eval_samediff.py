@@ -86,7 +86,7 @@ def main():
     print("Getting labels")
     labels = []
     for utt_id in ids:
-        word = "_".join(utt_id.split("_")[:-2])
+        word = utt_id.split("_")[0]  # "_".join(utt_id.split("_")[:-2])
         labels.append(word)
 
     print("Calculating average precision")
