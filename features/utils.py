@@ -79,12 +79,12 @@ def read_vad_from_fa(fa_fn, frame_indices=True):
     return vad_dict
 
 
-def write_samediff_words(fa_fn, output_fn):
+def write_samediff_words(fa_fn, output_fn, min_frames=50, min_chars=5):
     """
-    Extract ground truth types of at least 50 frames and 5 characters.
+    Find words of at least `min_frames` frames and `min_chars` characters.
 
-    Words are extracted from the forced alignment file `fa_fn` and written to
-    the word list file `output_fn`.
+    Ground truth words are extracted from the forced alignment file `fa_fn` and
+    written to the word list file `output_fn`.
     """
     print("Reading:", fa_fn)
     words = []
@@ -103,7 +103,7 @@ def write_samediff_words(fa_fn, output_fn):
     for utterance, label, (start, end) in words:
         start_frame = int(round(float(start) * 100))
         end_frame = int(round(float(end) * 100))
-        if end_frame - start_frame >= 50 and len(label) >= 5:
+        if end_frame - start_frame >= min_frames and len(label) >= min_chars:
             words_50fr5ch.append((utterance, label, (start_frame, end_frame)))
     print("No. tokens:", len(words_50fr5ch), "out of", len(words))
 

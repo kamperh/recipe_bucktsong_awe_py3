@@ -46,6 +46,18 @@ def main():
         print("Linking:", npz_fn, "to", link_fn)
         os.symlink(npz_fn, link_fn)
 
+    # Training: Ground truth words (larger set)
+    npz_fn = path.join(
+        relative_features_dir, "mfcc", "buckeye", "devpart1.samediff2.dd.npz"
+        )
+    link_fn = path.join(output_dir, "train.gt2.npz")
+    assert (
+        path.isfile(path.join(output_dir, npz_fn))
+        ), "missing file: {}".format(path.join(output_dir, npz_fn))
+    if not path.isfile(link_fn):
+        print("Linking:", npz_fn, "to", link_fn)
+        os.symlink(npz_fn, link_fn)
+
     # Training: UTD discovered words
     npz_fn = path.join(
         relative_features_dir, "mfcc", "buckeye", "devpart1.utd.dd.npz"

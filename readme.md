@@ -108,6 +108,9 @@ and filterbank features in the `features/` directory as follows:
     ./extract_features_buckeye.py
     ./extract_features_xitsonga.py
 
+More details on the feature file formats are given in
+[features/readme.md](features/readme.md).
+
 
 Evaluate frame-level features using the same-different task
 -----------------------------------------------------------
@@ -135,8 +138,8 @@ container can be used to launch a notebook session by running
 `./docker_notebook.sh` and then opening http://localhost:8889/.
 
 
-Testing
--------
+Unit tests
+----------
 In the root project directory, run `make test` to run unit tests.
 
 

@@ -143,6 +143,22 @@ def main():
         else:
             print("Using existing file:", output_npz_fn)
 
+    # Create a ground truth word list of at least 39 frames and 4 characters
+    list_fn = path.join(list_dir, "buckeye.samediff2.list")
+    if not path.isfile(list_fn):
+        utils.write_samediff_words(fa_fn, list_fn, min_frames=39, min_chars=4)
+    else:
+        print("Using existing file:", list_fn)
+
+    # Extract word segments from the MFCC NumPy archives
+    for subset in ["devpart1"]:  # , "devpart2", "zs"]:
+        input_npz_fn = path.join(mfcc_dir, subset + ".dd.npz")
+        output_npz_fn = path.join(mfcc_dir, subset + ".samediff2.dd.npz")
+        if not path.isfile(output_npz_fn):
+            print("Extracting MFCCs for same-different word tokens:", subset)
+            utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
+        else:
+            print("Using existing file:", output_npz_fn)
 
     # UTD-DISCOVERED WORD SEGMENTS
 

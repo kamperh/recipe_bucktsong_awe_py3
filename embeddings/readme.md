@@ -11,6 +11,12 @@ Create links to the MFCC NumPy archives:
 For Xitsonga, only UTD segments and test data is used; all validation (i.e.
 choosing hyper-parameters) is based on the Buckeye English validation data.
 
+The `gt2` set for Buckeye contains more word segments based on slightly relaxed
+thresholds (see [features/readme.md](features/readme.md)). The number of tokens
+in this set is similar to that in the `utd` set. However, since `gt2` contains
+tokens that are less similar to tokens in `val` or `test`, using this set
+actually results in worse performance for some of the models.
+
 
 Correspondence autoencoder
 --------------------------
