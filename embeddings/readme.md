@@ -205,7 +205,7 @@ Sweep:
 
     ./sweep.py --static_args \
         "--cae_n_epochs 150 --train_tag gt --ae_n_epochs 0" \
-        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep3  # HERE
+        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep3
     ./sweep.py --static_args \
         "--cae_n_epochs 150 --train_tag utd --ae_n_epochs 0" \
         --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae.paper.sweep4
@@ -217,8 +217,8 @@ Results (ground truth):
 
 Results (UTD):
 
-    Validation AP mean: ?? (+- ??)
-    Validation AP with normalisation mean: ?? (+- ??)
+    Validation AP mean: 0.1436 (+- 0.0035)
+    Validation AP with normalisation mean: 0.1730 (+- 0.0094)
 
 ### RNN-AE trained on ground truth segments:
 
@@ -229,10 +229,10 @@ Sweep:
 
 Validation results:
 
-    Validation AP mean: ?? (+- ??)
-    Validation AP with normalisation mean: ?? (+- ??)
-    Test AP mean: ?? (+- ??)
-    Test AP with normalisation mean: ?? (+- ??)
+    Validation AP mean: 0.2521 (+- 0.0193)
+    Validation AP with normalisation mean: 0.2688 (+- 0.0037)
+    Test AP mean: 0.2297 (+- 0.0240)
+    Test AP with normalisation mean: 0.2549 (+- 0.0050)
 
 ### RNN-AE trained on random segments:
 
@@ -243,17 +243,17 @@ Sweep:
 
 Results:
 
-    Validation AP mean: ?? (+- ??)
-    Validation AP with normalisation mean: ?? (+- ??)
-    Test AP mean: ?? (+- ??)
-    Test AP with normalisation mean: ?? (+- ??)
+    Validation AP mean: 0.2591 (+- 0.0032)
+    Validation AP with normalisation mean: 0.2687 (+- 0.0025)
+    Test AP mean: 0.2430 (+- 0.0039)
+    Test AP with normalisation mean: 0.2516 (+- 0.0018)
 
 ### RNN-AE trained on UTD segments:
 
 Sweep:
 
     ./sweep.py --static_args "--train_tag utd --cae_n_epochs 0" \
-        --rnd_seed 1,2,3,4,5 train_cae &> models/train_ae.paper.sweep5
+        --rnd_seed 1,2,3,4,5 train_cae &> models/train_ae.paper.sweep3  # HERE
 
 Results:
 
@@ -267,7 +267,7 @@ Results:
 Sweep:
 
     ./sweep.py --static_args "--train_tag gt2 --n_epochs 400" \
-        --rnd_seed 1,2,3,4,5 train_vae &> models/train_vae.paper.sweep10
+        --rnd_seed 1,2,3,4,5 train_vae &> models/train_vae.paper.sweep1
 
 Results:
 
