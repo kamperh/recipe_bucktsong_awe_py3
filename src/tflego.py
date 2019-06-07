@@ -332,7 +332,7 @@ def build_conv2d_transpose(x, filter_shape, stride=1, activation=tf.nn.relu):
         )
     input_shape = x.get_shape().as_list()
     output_shape = get_conv2d_transpose_output_shape(
-        x.get_shape().as_list(), W.get_shape().as_list()
+        x.get_shape().as_list(), W.get_shape().as_list(), stride
         )
     output_shape[0] = tf.shape(x)[0]
     x = tf.nn.conv2d_transpose(
