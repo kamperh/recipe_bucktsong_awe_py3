@@ -213,7 +213,7 @@ def train_siamese_cnn(options_dict):
     def samediff_val(normalise=False):
         # Embed validation
         np.random.seed(options_dict["rnd_seed"])
-        val_batch_iterator = batching.LabelledNopaddingIterator(
+        val_batch_iterator = batching.LabelledIterator(
             val_x, None, val_x.shape[0], False
             )
         labels = [val_labels[i] for i in val_batch_iterator.indices]
@@ -249,7 +249,7 @@ def train_siamese_cnn(options_dict):
 
     # Train Siamese CNN model
     val_model_fn = intermediate_model_fn
-    train_batch_iterator = batching.LabelledNopaddingIterator(
+    train_batch_iterator = batching.LabelledIterator(
         train_x, train_y, options_dict["batch_size"], shuffle_every_epoch=True
         )
     record_dict = training.train_fixed_epochs_external_val(

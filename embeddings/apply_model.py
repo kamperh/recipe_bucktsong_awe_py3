@@ -94,7 +94,7 @@ def apply_model(model_fn, subset, language):
         model = build_model(x, None, options_dict)
 
         # Embed data
-        batch_iterator = batching.LabelledNopaddingIterator(
+        batch_iterator = batching.LabelledIterator(
             x_data, None, x_data.shape[0], False
             )
         saver = tf.train.Saver()

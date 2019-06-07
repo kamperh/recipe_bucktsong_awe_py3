@@ -341,7 +341,7 @@ class LabelledBucketIterator(object):
             yield (batch_x_padded, batch_x_lengths, batch_y)
 
 
-class LabelledNopaddingIterator(object):
+class LabelledIterator(object):
     """
     Iterator without bucketing or padding but with labels.
     
