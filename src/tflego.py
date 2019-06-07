@@ -233,8 +233,8 @@ def build_maxpool2d(x, pool_shape, padding="VALID", name=None):
         )
 
 
-def build_cnn(x, input_shape, filter_shapes, pool_shapes, padding="VALID",
-        return_shapes=True):
+def build_cnn(x, input_shape, filter_shapes, pool_shapes, strides=None,
+        padding="VALID", return_shapes=False):
     """
     Build a convolutional neural network (CNN).
     
@@ -264,6 +264,9 @@ def build_cnn(x, input_shape, filter_shapes, pool_shapes, padding="VALID",
     pool_shape : list of list
         The pool shape of each layer as [height, width]. If None, then no
         pooling is applied.
+    strides : list of int
+        This list gives the stride for each layer. If None, then a stride of 1
+        is used.
     return_shapes : bool
         If True, a list of list of shapes in the order of the layers are
         additionally returned.
@@ -275,7 +278,10 @@ def build_cnn(x, input_shape, filter_shapes, pool_shapes, padding="VALID",
     for i_layer, (filter_shape, pool_shape) in enumerate(
             zip(filter_shapes, pool_shapes)):
         with tf.variable_scope("cnn_layer_{}".format(i_layer)):
-            cnn = build_conv2d_relu(cnn, filter_shape, padding=padding)
+            cnn = build_conv2d_relu(
+                cnn, filter_shape, padding=padding, stride=1 if strides is None
+                else strides[i_layer]
+                )
             if pool_shape is not None:
                 cnn = build_maxpool2d(cnn, pool_shape, padding=padding)
             shape = cnn.get_shape().as_list()
