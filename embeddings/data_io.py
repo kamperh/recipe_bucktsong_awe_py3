@@ -47,9 +47,11 @@ def trunc_and_limit_dim(x, lengths, d_frame, max_length):
         lengths[i] = min(lengths[i], max_length)
 
 
-def pad_sequences(x, n_padded, center_padded=True):
+def pad_sequences(x, n_padded, center_padded=True, return_mask=False):
     """Return the padded sequences and their original lengths."""
     padded_x = np.zeros((len(x), n_padded, x[0].shape[1]), dtype=NP_DTYPE)
+    if return_mask:
+        mask_x = np.zeros((len(x), n_padded, x[0].shape[1]), dtype=NP_DTYPE)
     lengths = []
     for i_data, cur_x in enumerate(x):
         length = cur_x.shape[0]
@@ -57,12 +59,22 @@ def pad_sequences(x, n_padded, center_padded=True):
             padding = int(np.round((n_padded - length) / 2.))
             if length <= n_padded:
                 padded_x[i_data, padding:padding + length, :] = cur_x
+                if return_mask:
+                    mask_x[i_data, padding:padding + length, :] = 1
             else:
                 # Cut out snippet from sequence exceeding n_padded
                 padded_x[i_data, :, :] = cur_x[-padding:-padding + n_padded]
+                if return_mask:
+                    mask_x[i_data, :, :] = 1
             lengths.append(min(length, n_padded))
         else:
             length = min(length, n_padded)
             padded_x[i_data, :length, :] = cur_x[:length, :]
+            if return_mask:
+                mask_x[i_data, :length, :] = 1
             lengths.append(length)
-    return padded_x, lengths
+    if return_mask:
+        return padded_x, lengths, mask_x
+    else:
+        return padded_x, lengths
+
