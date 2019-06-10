@@ -562,6 +562,14 @@ def main():
         for i in range(len(options_dict["dec_n_hiddens"])):
             options_dict["dec_n_hiddens"][i] = args.n_hiddens
 
+    # Do not output TensorFlow info and warning messages
+    import warnings
+    warnings.filterwarnings("ignore")
+    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+
+    if type(tf.contrib) != type(tf):
+        tf.contrib._warning = None
+
     # Train model
     train_cae(options_dict)
 
