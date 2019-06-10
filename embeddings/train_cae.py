@@ -36,6 +36,7 @@ import training
 default_options_dict = {
         "data_dir": path.join("data", "buckeye.mfcc"),
         "train_tag": "utd",                 # "gt", "gt2", "utd", "rnd"
+        "pretrain_rnd": False,              # pretrain on random segments
         "max_length": 100,
         "min_length": 50,                   # only used with "rnd" train_tag
         "bidirectional": False,
@@ -169,6 +170,15 @@ def train_cae(options_dict):
     train_x, train_labels, train_lengths, train_keys, train_speakers = (
         data_io.load_data_from_npz(npz_fn, min_length)
         )
+
+    # Pretraining data (if specified)
+    if options_dict["pretrain_rnd"]:
+        npz_fn = path.join(
+            options_dict["data_dir"], "train.all.npz"
+            )
+        (pretrain_x, pretrain_labels, pretrain_lengths, pretrain_keys,
+            pretrain_speakers) = data_io.load_data_from_npz(npz_fn, min_length)
+        assert False
 
     # Validation data
     if options_dict["use_test_for_val"]:
@@ -465,6 +475,12 @@ def check_argv():
         default=default_options_dict["train_tag"]
         )
     parser.add_argument(
+        "--pretrain_rnd", action="store_true",
+        help="pretrain on random segments "
+        "(default: %(default)s)",
+        default=default_options_dict["pretrain_rnd"]
+        )
+    parser.add_argument(
         "--bidirectional", action="store_true",
         help="use bidirectional encoder and decoder layers "
         "(default: %(default)s)",
@@ -519,6 +535,7 @@ def main():
     options_dict["extrinsic_usefinal"] = args.extrinsic_usefinal
     options_dict["use_test_for_val"] = args.use_test_for_val
     options_dict["train_tag"] = args.train_tag
+    options_dict["pretrain_rnd"] = args.pretrain_rnd
     options_dict["rnd_seed"] = args.rnd_seed
     if args.n_hiddens is not None and args.enc_n_layers is not None:
         options_dict["enc_n_hiddens"] = [1]*args.enc_n_layers
