@@ -35,7 +35,8 @@ import training
 
 default_options_dict = {
         "data_dir": path.join("data", "buckeye.mfcc"),
-        "train_tag": "utd",                 # "gt", "gt2", "utd", "rnd"
+        "train_tag": "utd",                 # "gt", "gt2", "utd", "rnd",
+                                            # "besgmm"
         "pretrain_rnd": False,              # pretrain on random segments
         "max_length": 100,
         "min_length": 50,                   # only used with "rnd" train_tag or 
@@ -484,7 +485,7 @@ def check_argv():
         default=default_options_dict["keep_prob"]
         )
     parser.add_argument(
-        "--train_tag", type=str, choices=["gt", "gt2", "utd", "rnd"],
+        "--train_tag", type=str, choices=["gt", "gt2", "utd", "rnd", "besgmm"],
         help="training set tag (default: %(default)s)",
         default=default_options_dict["train_tag"]
         )
