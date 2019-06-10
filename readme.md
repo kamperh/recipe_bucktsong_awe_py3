@@ -132,10 +132,10 @@ steps in [embeddings/readme.md](embeddings/readme.md).
 
 Notebooks
 ---------
-Some example notebooks are given in the `notebooks/` directory. Note that these
-were used mainly during development, so they are not polished.  A docker
-container can be used to launch a notebook session by running
-`./docker_notebook.sh` and then opening http://localhost:8889/.
+Some notebooks used during development are given in the `notebooks/` directory.
+Note that these were used mainly for debugging and exploration, so they are not
+polished. A docker container can be used to launch a notebook session by
+running `./docker_notebook.sh` and then opening http://localhost:8889/.
 
 
 Unit tests
