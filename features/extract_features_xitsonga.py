@@ -155,6 +155,20 @@ def main():
     else:
         print("Using existing file:", output_npz_fn)
 
+
+    # BES-GMM DISCOVERED WORD SEGMENTS
+
+    input_npz_fn = path.join(mfcc_dir, "xitsonga.dd.npz")
+    output_npz_fn = path.join(mfcc_dir, "xitsonga.besgmm.dd.npz")
+    if not path.isfile(output_npz_fn):
+        list_fn = path.join(
+            "..", "data", "xitsonga.d18547ee5e.besgmm_terms.txt"
+            )
+        print("Extracting MFCCs for BES-GMM word tokens")
+        utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
+    else:
+        print("Using existing file:", output_npz_fn)
+
     print(datetime.now())
 
 
