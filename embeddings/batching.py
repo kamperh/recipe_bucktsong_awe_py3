@@ -249,9 +249,6 @@ class RandomSegmentsIterator(object):
         
         for i_batch in range(self.n_batches):
 
-            print(len(x_full_list))
-            assert False
-
             batch_indices = self.indices[
                 i_batch*self.batch_size:(i_batch + 1)*self.batch_size
                 ]
