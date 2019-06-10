@@ -17,9 +17,6 @@ import hashlib
 import numpy as np
 import os
 import sys
-
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-
 import tensorflow as tf
 
 sys.path.append(path.join("..", "src"))
@@ -568,6 +565,8 @@ def main():
     # Do not output TensorFlow info and warning messages
     import warnings
     warnings.filterwarnings("ignore")
+    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+
     if type(tf.contrib) != type(tf):
         tf.contrib._warning = None
 
