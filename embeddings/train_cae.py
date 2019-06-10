@@ -178,7 +178,6 @@ def train_cae(options_dict):
             )
         (pretrain_x, pretrain_labels, pretrain_lengths, pretrain_keys,
             pretrain_speakers) = data_io.load_data_from_npz(npz_fn, min_length)
-        assert False
 
     # Validation data
     if options_dict["use_test_for_val"]:
@@ -210,6 +209,10 @@ def train_cae(options_dict):
     print("Limiting dimensionality:", d_frame)
     print("Limiting length:", max_length)
     data_io.trunc_and_limit_dim(train_x, train_lengths, d_frame, max_length)
+    if options_dict["pretrain_rnd"]:
+        data_io.trunc_and_limit_dim(
+            pretrain_x, pretrain_lengths, d_frame, max_length
+            )
     data_io.trunc_and_limit_dim(val_x, val_lengths, d_frame, max_length)
 
     # Get pairs
@@ -302,19 +305,27 @@ def train_cae(options_dict):
 
     # Train AE
     val_model_fn = pretrain_intermediate_model_fn
-    if options_dict["train_tag"] == "rnd":
+    if options_dict["pretrain_usefinal"]:
         train_batch_iterator = batching.RandomSegmentsIterator(
-            train_x, options_dict["ae_batch_size"],
+            pretrain_x, options_dict["ae_batch_size"],
             options_dict["ae_n_buckets"], shuffle_every_epoch=True,
             paired=True
             )
     else:
-        train_batch_iterator = batching.PairedBucketIterator(
-            train_x, [(i, i) for i in range(len(train_x))],
-            options_dict["ae_batch_size"], options_dict["ae_n_buckets"],
-            shuffle_every_epoch=True, speaker_ids=None if
-            options_dict["d_speaker_embedding"] is None else train_speaker_ids
-            )
+        if options_dict["train_tag"] == "rnd":
+            train_batch_iterator = batching.RandomSegmentsIterator(
+                train_x, options_dict["ae_batch_size"],
+                options_dict["ae_n_buckets"], shuffle_every_epoch=True,
+                paired=True
+                )
+        else:
+            train_batch_iterator = batching.PairedBucketIterator(
+                train_x, [(i, i) for i in range(len(train_x))],
+                options_dict["ae_batch_size"], options_dict["ae_n_buckets"],
+                shuffle_every_epoch=True, speaker_ids=None if
+                options_dict["d_speaker_embedding"] is None else
+                train_speaker_ids
+                )
     if options_dict["d_speaker_embedding"] is None:
         ae_record_dict = training.train_fixed_epochs_external_val(
             options_dict["ae_n_epochs"], optimizer, loss, train_batch_iterator,
