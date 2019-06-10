@@ -224,7 +224,7 @@ Results (UTD):
 
 Sweep:
 
-    ./sweep.py --static_args "--train_tag gt2 --cae_n_epochs 0" \
+    ./sweep.py --static_args "--train_tag gt --cae_n_epochs 0" \
         --rnd_seed 1,2,3,4,5 train_cae &> models/train_ae.paper.sweep1
 
 Validation results:
@@ -257,10 +257,10 @@ Sweep:
 
 Results:
 
-    Validation AP mean: ?? (+- ??)
-    Validation AP with normalisation mean: ?? (+- ??)
-    Test AP mean: ?? (+- ??)
-    Test AP with normalisation mean: ?? (+- ??)
+    Validation AP mean: 0.2404 (+- 0.0074)
+    Validation AP with normalisation mean: 0.2681 (+- 0.0031)
+    Test AP mean: 0.2327 (+- 0.0065)
+    Test AP with normalisation mean: 0.2551 (+- 0.0034)
 
 ### RNN-VAE trained on ground truth segments:
 
@@ -271,34 +271,34 @@ Sweep:
 
 Results:
 
-    Validation AP mean: ?? (+- ??)
-    Validation AP with normalisation mean: ?? (+- ??)
+    Validation AP mean: 0.2639 (+- 0.0023)
+    Validation AP with normalisation mean: 0.2563 (+- 0.0038)
 
 ### RNN-VAE trained on random segments:
 
 Sweep:
 
     ./sweep.py --static_args "--train_tag rnd --n_epochs 400" \
-        --rnd_seed 1,2,3,4,5 train_vae &> models/train_vae.paper.sweep9
+        --rnd_seed 1,2,3,4,5 train_vae &> models/train_vae.paper.sweep2
 
 Results:
 
-    Validation AP mean: ?? (+- ??)
-    Validation AP with normalisation mean: ?? (+- ??)
+    Validation AP mean: 0.2562 (+- 0.0032)
+    Validation AP with normalisation mean: 0.2619 (+- 0.0050)
 
 ### RNN-VAE trained on UTD segments:
 
 Sweep:
 
     ./sweep.py --static_args "--train_tag utd --n_epochs 400" \
-        --rnd_seed 1,2,3,4,5 train_vae &> models/train_vae.paper.sweep8
+        --rnd_seed 1,2,3,4,5 train_vae &> models/train_vae.paper.sweep3
 
 Results:
 
-    Validation AP mean: ?? (+- ??)
-    Validation AP with normalisation mean: ?? (+- ??)
-    Test AP mean: ?? (+- ??)
-    Test AP with normalisation mean: ?? (+- ??)
+    Validation AP mean: 0.2588 (+- 0.0031)
+    Validation AP with normalisation mean: 0.2668 (+- 0.0033)
+    Test AP mean: 0.2389 (+- 0.0034)
+    Test AP with normalisation mean: 0.2506 (+- 0.0035)
 
 
 Results: Xitsonga
@@ -310,12 +310,12 @@ Sweep:
 
     ./sweep.py --static_args \
         "--data_dir data/xitsonga.mfcc --pretrain_usefinal --extrinsic_usefinal --use_test_for_val --cae_n_epochs 3 --train_tag utd" \
-        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae_xitsonga.paper.sweep8
+        --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae_xitsonga.paper.sweep1
 
 Test results:
 
-    Test AP mean: ?? (+- ??)
-    Test AP with normalisation mean: ?? (+- ??)
+    Test AP mean: 0.2914 (+- 0.0140)
+    Test AP with normalisation mean: 0.3242 (+- 0.0078)
 
 Although it says "validation" in the output, remember that we used the test
 data as validation data during training without cheating, i.e. we always used
@@ -328,12 +328,12 @@ Sweep:
 
     ./sweep.py --static_args \
         "--data_dir data/xitsonga.mfcc --pretrain_usefinal --extrinsic_usefinal --use_test_for_val --train_tag utd --cae_n_epochs 0" \
-        --rnd_seed 1,2,3,4,5 train_cae &> models/train_ae_xitsonga.paper.sweep9
+        --rnd_seed 1,2,3,4,5 train_cae &> models/train_ae_xitsonga.paper.sweep2
 
 Test results:
 
-    Test AP mean: ?? (+- ??)
-    Test AP with normalisation mean: ?? (+- ??)
+    Test AP mean: 0.1244 (+- 0.0102)
+    Test AP with normalisation mean: 0.1389 (+- 0.0034)
 
 ### RNN-VAE trained on UTD segments:
 
@@ -341,9 +341,9 @@ Sweep:
 
     ./sweep.py --static_args \
         "--data_dir data/xitsonga.mfcc --n_epochs 300 --extrinsic_usefinal --use_test_for_val --train_tag utd" \
-        --rnd_seed 1,2,3,4,5 train_vae &> models/train_va_xitsongae.paper.sweep11
+        --rnd_seed 1,2,3,4,5 train_vae &> models/train_va_xitsongae.paper.sweep3
 
 Test results:
 
-    Test AP mean: ?? (+- ??)
-    Test AP with normalisation mean: ?? (+- ??)
+    Validation AP mean: 0.1175 (+- 0.0039)
+    Validation AP with normalisation mean: 0.1158 (+- 0.0027)
