@@ -20,7 +20,7 @@ actually results in worse performance for some of the models.
 
 Correspondence autoencoder
 --------------------------
-Train an RNN-CAE on ground truth segments:
+Train an CAE-RNN on ground truth segments:
 
     # Buckeye
     ./train_cae.py --cae_n_epochs 30 --train_tag gt
@@ -52,7 +52,7 @@ Analyse embeddings:
         because,basically,exactly,probably,yknow,school,sometimes,something,education,situation \
         models/buckeye.mfcc.utd/train_cae/e6f4584e05/cae.best_val.test.npz
 
-Train an RNN-CAE on UTD segments:
+Train an CAE-RNN on UTD segments:
 
     # Buckeye
     ./train_cae.py --train_tag utd
@@ -62,7 +62,7 @@ Train an RNN-CAE on UTD segments:
         --pretrain_usefinal --extrinsic_usefinal --use_test_for_val
         --cae_n_epochs 3
 
-Apply a Buckeye RNN-CAE on Xitsonga:
+Apply a Buckeye CAE-RNN on Xitsonga:
 
     ./apply_model.py --language xitsonga \
         models/buckeye.mfcc.gt/train_cae/546fd9ac51/cae.best_val.ckpt test
@@ -72,33 +72,33 @@ Apply a Buckeye RNN-CAE on Xitsonga:
 
 Autoencoder
 -----------
-To train an RNN-AE, we actually use the same script as for the RNN-CAE, but
+To train an AE-RNN, we actually use the same script as for the CAE-RNN, but
 only with the AE pre-training step.
 
-Train an RNN-AE on ground truth segments:
+Train an AE-RNN on ground truth segments:
 
     ./train_cae.py --train_tag gt2 --cae_n_epochs 0
 
-Train an RNN-AE on random segments:
+Train an AE-RNN on random segments:
 
     ./train_cae.py --train_tag rnd --cae_n_epochs 0
 
-Train a RNN-AE on UTD segments:
+Train a AE-RNN on UTD segments:
 
     ./train_cae.py --train_tag utd --cae_n_epochs 0
 
 
 Variational autoencoder
 -----------------------
-Train an RNN-VAE on ground truth segments:
+Train an VAE-RNN on ground truth segments:
 
     ./train_vae.py --train_tag gt
 
-Train an RNN-VAE on random segments:
+Train an VAE-RNN on random segments:
 
     ./train_vae.py --train_tag rnd
 
-Train an RNN-VAE on UTD segments:
+Train an VAE-RNN on UTD segments:
 
     ./train_vae.py --train_tag utd
 
@@ -165,7 +165,7 @@ include the test set analysis.
 Results: Buckeye
 ----------------
 
-### RNN-CAE trained on ground truth segments:
+### CAE-RNN trained on ground truth segments:
 
 Sweep:
 
@@ -184,7 +184,7 @@ explained above):
     Test AP mean: 0.5212 (+- 0.0081)
     Test AP with normalisation mean: 0.5245 (+- 0.0113)
 
-### RNN-CAE trained on UTD segments:
+### CAE-RNN trained on UTD segments:
 
 Sweep:
 
@@ -199,7 +199,7 @@ Results:
     Test AP mean: 0.2922 (+- 0.0145)
     Test AP with normalisation mean: 0.3268 (+- 0.0052)
 
-### RNN-CAE trained without initialising from RNN-AE:
+### CAE-RNN trained without initialising from AE-RNN:
 
 Sweep:
 
@@ -220,7 +220,7 @@ Results (UTD):
     Validation AP mean: 0.1436 (+- 0.0035)
     Validation AP with normalisation mean: 0.1730 (+- 0.0094)
 
-### RNN-AE trained on ground truth segments:
+### AE-RNN trained on ground truth segments:
 
 Sweep:
 
@@ -234,7 +234,7 @@ Validation results:
     Test AP mean: 0.2297 (+- 0.0240)
     Test AP with normalisation mean: 0.2549 (+- 0.0050)
 
-### RNN-AE trained on random segments:
+### AE-RNN trained on random segments:
 
 Sweep:
 
@@ -248,7 +248,7 @@ Results:
     Test AP mean: 0.2430 (+- 0.0039)
     Test AP with normalisation mean: 0.2516 (+- 0.0018)
 
-### RNN-AE trained on UTD segments:
+### AE-RNN trained on UTD segments:
 
 Sweep:
 
@@ -262,7 +262,7 @@ Results:
     Test AP mean: 0.2327 (+- 0.0065)
     Test AP with normalisation mean: 0.2551 (+- 0.0034)
 
-### RNN-VAE trained on ground truth segments:
+### VAE-RNN trained on ground truth segments:
 
 Sweep:
 
@@ -274,7 +274,7 @@ Results:
     Validation AP mean: 0.2639 (+- 0.0023)
     Validation AP with normalisation mean: 0.2563 (+- 0.0038)
 
-### RNN-VAE trained on random segments:
+### VAE-RNN trained on random segments:
 
 Sweep:
 
@@ -286,7 +286,7 @@ Results:
     Validation AP mean: 0.2562 (+- 0.0032)
     Validation AP with normalisation mean: 0.2619 (+- 0.0050)
 
-### RNN-VAE trained on UTD segments:
+### VAE-RNN trained on UTD segments:
 
 Sweep:
 
@@ -304,7 +304,7 @@ Results:
 Results: Xitsonga
 -----------------
 
-### RNN-CAE trained on UTD segments:
+### CAE-RNN trained on UTD segments:
 
 Sweep:
 
@@ -322,7 +322,7 @@ data as validation data during training without cheating, i.e. we always used
 the final model through `--extrinsic_usefinal`. This is also true for all the
 results below.
 
-### RNN-AE trained on UTD segments:
+### AE-RNN trained on UTD segments:
 
 Sweep:
 
@@ -335,7 +335,7 @@ Test results:
     Test AP mean: 0.1244 (+- 0.0102)
     Test AP with normalisation mean: 0.1389 (+- 0.0034)
 
-### RNN-VAE trained on UTD segments:
+### VAE-RNN trained on UTD segments:
 
 Sweep:
 

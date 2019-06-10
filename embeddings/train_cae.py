@@ -38,7 +38,8 @@ default_options_dict = {
         "train_tag": "utd",                 # "gt", "gt2", "utd", "rnd"
         "pretrain_rnd": False,              # pretrain on random segments
         "max_length": 100,
-        "min_length": 50,                   # only used with "rnd" train_tag
+        "min_length": 50,                   # only used with "rnd" train_tag or 
+                                            # when `pretrain_rnd` is set
         "bidirectional": False,
         "rnn_type": "gru",                  # "lstm", "gru", "rnn"
         "enc_n_hiddens": [400, 400, 400],
@@ -177,7 +178,9 @@ def train_cae(options_dict):
             options_dict["data_dir"], "train.all.npz"
             )
         (pretrain_x, pretrain_labels, pretrain_lengths, pretrain_keys,
-            pretrain_speakers) = data_io.load_data_from_npz(npz_fn, min_length)
+            pretrain_speakers) = data_io.load_data_from_npz(
+            npz_fn, options_dict["min_length"]
+            )
 
     # Validation data
     if options_dict["use_test_for_val"]:
@@ -305,7 +308,7 @@ def train_cae(options_dict):
 
     # Train AE
     val_model_fn = pretrain_intermediate_model_fn
-    if options_dict["pretrain_usefinal"]:
+    if options_dict["pretrain_rnd"]:
         train_batch_iterator = batching.RandomSegmentsIterator(
             pretrain_x, options_dict["ae_batch_size"],
             options_dict["ae_n_buckets"], shuffle_every_epoch=True,
