@@ -62,6 +62,9 @@ Train an CAE-RNN on UTD segments:
         --pretrain_usefinal --extrinsic_usefinal --use_test_for_val
         --cae_n_epochs 3
 
+The `--pretrain_rnd` tag can also be passed ton `train_cae.py`, in which case
+pretraining will be performed on random segments from the training data.
+
 Apply a Buckeye CAE-RNN on Xitsonga:
 
     ./apply_model.py --language xitsonga \
