@@ -37,10 +37,11 @@ default_options_dict = {
         "data_dir": path.join("data", "buckeye.mfcc"),
         "train_tag": "utd",                 # "gt", "gt2", "utd", "rnd",
                                             # "besgmm", "besgmm1"
-        "pretrain_rnd": False,              # pretrain on random segments
+        "pretrain_tag": None,               # if not provided, same tag as
+                                            # train_tag is used
         "max_length": 100,
         "min_length": 50,                   # only used with "rnd" train_tag or 
-                                            # when `pretrain_rnd` is set
+                                            # or pretrain_tag
         "bidirectional": False,
         "rnn_type": "gru",                  # "lstm", "gru", "rnn"
         "enc_n_hiddens": [400, 400, 400],
@@ -174,14 +175,16 @@ def train_cae(options_dict):
         )
 
     # Pretraining data (if specified)
-    if options_dict["pretrain_rnd"]:
+    if options_dict["pretrain_tag"] is not None:
+        min_length = None
+        if options_dict["pretrain_tag"] == "rnd":
+            min_length = options_dict["min_length"]
+            pretrain_tag = "all"
         npz_fn = path.join(
-            options_dict["data_dir"], "train.all.npz"
+            options_dict["data_dir"], "train." + pretrain_tag + ".npz"
             )
         (pretrain_x, pretrain_labels, pretrain_lengths, pretrain_keys,
-            pretrain_speakers) = data_io.load_data_from_npz(
-            npz_fn, options_dict["min_length"]
-            )
+            pretrain_speakers) = data_io.load_data_from_npz(npz_fn, min_length)
 
     # Validation data
     if options_dict["use_test_for_val"]:
@@ -213,7 +216,7 @@ def train_cae(options_dict):
     print("Limiting dimensionality:", d_frame)
     print("Limiting length:", max_length)
     data_io.trunc_and_limit_dim(train_x, train_lengths, d_frame, max_length)
-    if options_dict["pretrain_rnd"]:
+    if options_dict["pretrain_tag"] is not None:
         data_io.trunc_and_limit_dim(
             pretrain_x, pretrain_lengths, d_frame, max_length
             )
@@ -309,12 +312,26 @@ def train_cae(options_dict):
 
     # Train AE
     val_model_fn = pretrain_intermediate_model_fn
-    if options_dict["pretrain_rnd"]:
-        train_batch_iterator = batching.RandomSegmentsIterator(
-            pretrain_x, options_dict["ae_batch_size"],
-            options_dict["ae_n_buckets"], shuffle_every_epoch=True,
-            paired=True
-            )
+    if options_dict["pretrain_tag"] is not None:
+        if options_dict["pretrain_tag"] == "rnd":
+            train_batch_iterator = batching.RandomSegmentsIterator(
+                pretrain_x, options_dict["ae_batch_size"],
+                options_dict["ae_n_buckets"], shuffle_every_epoch=True,
+                paired=True
+                )
+        else:
+            train_batch_iterator = batching.PairedBucketIterator(
+                pretrain_x, [(i, i) for i in range(len(pretrain_x))],
+                options_dict["ae_batch_size"], options_dict["ae_n_buckets"],
+                shuffle_every_epoch=True, speaker_ids=None if
+                options_dict["d_speaker_embedding"] is None else
+                train_speaker_ids
+                )
+        # train_batch_iterator = batching.RandomSegmentsIterator(
+        #     pretrain_x, options_dict["ae_batch_size"],
+        #     options_dict["ae_n_buckets"], shuffle_every_epoch=True,
+        #     paired=True
+        #     )
     else:
         if options_dict["train_tag"] == "rnd":
             train_batch_iterator = batching.RandomSegmentsIterator(
@@ -490,11 +507,12 @@ def check_argv():
         default=default_options_dict["train_tag"]
         )
     parser.add_argument(
-        "--pretrain_rnd", action="store_true",
-        help="pretrain on random segments "
-        "(default: %(default)s)",
-        default=default_options_dict["pretrain_rnd"]
+        "--pretrain_tag", type=str, choices=["gt", "gt2", "utd", "rnd",
+        "besgmm", "besgmm1"],
+        help="pretraining set tag (default: %(default)s)",
+        default=default_options_dict["train_tag"]
         )
+
     parser.add_argument(
         "--bidirectional", action="store_true",
         help="use bidirectional encoder and decoder layers "
@@ -550,7 +568,7 @@ def main():
     options_dict["extrinsic_usefinal"] = args.extrinsic_usefinal
     options_dict["use_test_for_val"] = args.use_test_for_val
     options_dict["train_tag"] = args.train_tag
-    options_dict["pretrain_rnd"] = args.pretrain_rnd
+    options_dict["pretrain_tag"] = args.pretrain_tag
     options_dict["rnd_seed"] = args.rnd_seed
     if args.n_hiddens is not None and args.enc_n_layers is not None:
         options_dict["enc_n_hiddens"] = [1]*args.enc_n_layers
