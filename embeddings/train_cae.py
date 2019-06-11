@@ -36,7 +36,8 @@ import training
 default_options_dict = {
         "data_dir": path.join("data", "buckeye.mfcc"),
         "train_tag": "utd",                 # "gt", "gt2", "utd", "rnd",
-                                            # "besgmm", "besgmm1"
+                                            # "besgmm", "besgmm1",
+                                            # "besgmm_mindur0.425"
         "pretrain_tag": None,               # if not provided, same tag as
                                             # train_tag is used
         "max_length": 100,
@@ -225,6 +226,7 @@ def train_cae(options_dict):
 
     # Get pairs
     pair_list = batching.get_pair_list(train_labels)
+    print("No. pairs:", len(pair_list))
 
 
     # DEFINE MODEL
@@ -504,12 +506,13 @@ def check_argv():
         )
     parser.add_argument(
         "--train_tag", type=str, choices=["gt", "gt2", "utd", "rnd", "besgmm",
-        "besgmm1"], help="training set tag (default: %(default)s)",
+        "besgmm1", "besgmm_mindur0.425"],
+        help="training set tag (default: %(default)s)",
         default=default_options_dict["train_tag"]
         )
     parser.add_argument(
         "--pretrain_tag", type=str, choices=["gt", "gt2", "utd", "rnd",
-        "besgmm", "besgmm1"],
+        "besgmm", "besgmm1", "besgmm_mindur0.425"],
         help="pretraining set tag (default: %(default)s)",
         default=default_options_dict["train_tag"]
         )

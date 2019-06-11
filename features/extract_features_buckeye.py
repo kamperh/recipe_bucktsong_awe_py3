@@ -242,6 +242,20 @@ def main():
         else:
             print("Using existing file:", output_npz_fn)
 
+        input_npz_fn = path.join(mfcc_dir, subset + ".dd.npz")
+        output_npz_fn = path.join(
+            mfcc_dir, subset + ".besgmm_mindur0.425.dd.npz"
+            )
+        if not path.isfile(output_npz_fn):
+            list_fn = path.join(
+                "..", "data",
+                "buckeye_devpart1.52e70ca864.besgmm_terms.mindur0.425.txt"
+                )
+            print("Extracting MFCCs for BES-GMM word tokens:", subset)
+            utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
+        else:
+            print("Using existing file:", output_npz_fn)
+
     print(datetime.now())
 
 
