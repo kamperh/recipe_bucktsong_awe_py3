@@ -86,7 +86,7 @@ def main():
     npz_fn = path.join(
         relative_features_dir, "mfcc", "buckeye", "devpart1.besgmm1.dd.npz"
         )
-    link_fn = path.join(output_dir, "train.besgmm.npz")
+    link_fn = path.join(output_dir, "train.besgmm1.npz")
     assert (
         path.isfile(path.join(output_dir, npz_fn))
         ), "missing file: {}".format(path.join(output_dir, npz_fn))
