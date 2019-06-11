@@ -175,7 +175,7 @@ def train_cae(options_dict):
         )
 
     # Pretraining data (if specified)
-    pretrain_tag = options_dict["train_tag"]
+    pretrain_tag = options_dict["pretrain_tag"]
     if options_dict["pretrain_tag"] is not None:
         min_length = None
         if options_dict["pretrain_tag"] == "rnd":
