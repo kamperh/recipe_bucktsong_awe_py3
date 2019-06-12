@@ -515,7 +515,7 @@ def check_argv():
         "besgmm", "besgmm1", "besgmm2", "besgmm3", "besgmm4",
         "besgmm_mindur0.425"],
         help="pretraining set tag (default: %(default)s)",
-        default=default_options_dict["train_tag"]
+        default=default_options_dict["pretrain_tag"]
         )
 
     parser.add_argument(
