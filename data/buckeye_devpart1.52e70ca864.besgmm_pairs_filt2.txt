@@ -1,0 +1,1 @@
+/media/kamperh/endgame/projects/phd/buckeye_tsonga/bucktsong_segment/models/devpart1/mfcc.n_10.unsup_syl/52e70ca864/pairs_filtered.txt

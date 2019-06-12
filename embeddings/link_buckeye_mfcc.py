@@ -83,28 +83,18 @@ def main():
         os.symlink(npz_fn, link_fn)
 
     # Training: BES-GMM discovered words
-    npz_fn = path.join(
-        relative_features_dir, "mfcc", "buckeye", "devpart1.besgmm1.dd.npz"
-        )
-    link_fn = path.join(output_dir, "train.besgmm1.npz")
-    assert (
-        path.isfile(path.join(output_dir, npz_fn))
-        ), "missing file: {}".format(path.join(output_dir, npz_fn))
-    if not path.isfile(link_fn):
-        print("Linking:", npz_fn, "to", link_fn)
-        os.symlink(npz_fn, link_fn)
-
-    # Training: BES-GMM discovered words
-    npz_fn = path.join(
-        relative_features_dir, "mfcc", "buckeye", "devpart1.besgmm2.dd.npz"
-        )
-    link_fn = path.join(output_dir, "train.besgmm2.npz")
-    assert (
-        path.isfile(path.join(output_dir, npz_fn))
-        ), "missing file: {}".format(path.join(output_dir, npz_fn))
-    if not path.isfile(link_fn):
-        print("Linking:", npz_fn, "to", link_fn)
-        os.symlink(npz_fn, link_fn)
+    for tag in ["1", "2", "3"]:
+        npz_fn = path.join(
+            relative_features_dir, "mfcc", "buckeye", "devpart1.besgmm" + tag +
+            ".dd.npz"
+            )
+        link_fn = path.join(output_dir, "train.besgmm" + tag + ".npz")
+        assert (
+            path.isfile(path.join(output_dir, npz_fn))
+            ), "missing file: {}".format(path.join(output_dir, npz_fn))
+        if not path.isfile(link_fn):
+            print("Linking:", npz_fn, "to", link_fn)
+            os.symlink(npz_fn, link_fn)
 
     # Training: BES-GMM discovered words
     npz_fn = path.join(
