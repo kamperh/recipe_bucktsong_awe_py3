@@ -242,7 +242,7 @@ def main():
         else:
             print("Using existing file:", output_npz_fn)
 
-        for tag in ["2", "3", "4", "5", "6"]:
+        for tag in ["2", "3", "4", "5", "6", "7"]:
             pairs_fn = path.join(
                 "..", "data",
                 "buckeye_devpart1.52e70ca864.besgmm_pairs_filt" + tag + ".txt"

@@ -507,6 +507,7 @@ def check_argv():
     parser.add_argument(
         "--train_tag", type=str, choices=["gt", "gt2", "utd", "rnd", "besgmm",
         "besgmm1", "besgmm2", "besgmm3", "besgmm4", "besgmm5", "besgmm6",
+        "besgmm7", "besgmm8", "besgmm9",
         "besgmm_mindur0.425"],
         help="training set tag (default: %(default)s)",
         default=default_options_dict["train_tag"]
@@ -514,8 +515,7 @@ def check_argv():
     parser.add_argument(
         "--pretrain_tag", type=str, choices=["gt", "gt2", "utd", "rnd",
         "besgmm", "besgmm1", "besgmm2", "besgmm3", "besgmm4", "besgmm5",
-        "besgmm6",
-        "besgmm_mindur0.425"],
+        "besgmm6", "besgmm7", "besgmm8", "besgmm9", "besgmm_mindur0.425"],
         help="pretraining set tag (default: %(default)s)",
         default=default_options_dict["pretrain_tag"]
         )
