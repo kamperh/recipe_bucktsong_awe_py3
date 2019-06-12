@@ -64,7 +64,8 @@ default_options_dict = {
                                             # will be used (instead of the
                                             # validation best)
         "use_test_for_val": False,
-        "n_val_interval": 1,
+        "ae_n_val_interval": 1,
+        "cae_n_val_interval": 1,
         "d_speaker_embedding": None,        # if None, no speaker information
                                             # is used, otherwise this is the
                                             # embedding dimensionality
@@ -356,7 +357,7 @@ def train_cae(options_dict):
             [a, a_lengths, b, b_lengths], samediff_val,
             save_model_fn=pretrain_intermediate_model_fn,
             save_best_val_model_fn=pretrain_model_fn,
-            n_val_interval=options_dict["n_val_interval"]
+            n_val_interval=options_dict["ae_n_val_interval"]
             )
     else:
         ae_record_dict = training.train_fixed_epochs_external_val(
@@ -364,7 +365,7 @@ def train_cae(options_dict):
             [a, a_lengths, b, b_lengths, speaker_id], samediff_val,
             save_model_fn=pretrain_intermediate_model_fn,
             save_best_val_model_fn=pretrain_model_fn,
-            n_val_interval=options_dict["n_val_interval"]
+            n_val_interval=options_dict["ae_n_val_interval"]
             )
 
 
@@ -393,7 +394,7 @@ def train_cae(options_dict):
                 train_batch_iterator, [a, a_lengths, b, b_lengths],
                 samediff_val, save_model_fn=intermediate_model_fn,
                 save_best_val_model_fn=model_fn,
-                n_val_interval=options_dict["n_val_interval"],
+                n_val_interval=options_dict["cae_n_val_interval"],
                 load_model_fn=cae_pretrain_model_fn
                 )
         else:
@@ -402,7 +403,7 @@ def train_cae(options_dict):
                 train_batch_iterator, [a, a_lengths, b, b_lengths, speaker_id],
                 samediff_val, save_model_fn=intermediate_model_fn,
                 save_best_val_model_fn=model_fn,
-                n_val_interval=options_dict["n_val_interval"],
+                n_val_interval=options_dict["cae_n_val_interval"],
                 load_model_fn=cae_pretrain_model_fn
                 )
 
@@ -500,6 +501,16 @@ def check_argv():
         "(only used if n_hiddens is also given)"
         )
     parser.add_argument(
+        "--ae_n_val_interval", type=int,
+        help="number of epochs between AE validation (default: %(default)s)",
+        default=default_options_dict["ae_n_val_interval"]
+        )
+    parser.add_argument(
+        "--cae_n_val_interval", type=int,
+        help="number of epochs between AE validation (default: %(default)s)",
+        default=default_options_dict["cae_n_val_interval"]
+        )
+    parser.add_argument(
         "--keep_prob", type=float,
         help="dropout keep probability (default: %(default)s)",
         default=default_options_dict["keep_prob"]
@@ -567,6 +578,8 @@ def main():
     options_dict["data_dir"] = args.data_dir
     options_dict["ae_n_epochs"] = args.ae_n_epochs
     options_dict["cae_n_epochs"] = args.cae_n_epochs
+    options_dict["ae_n_val_interval"] = args.ae_n_val_interval
+    options_dict["cae_n_val_interval"] = args.cae_n_val_interval
     options_dict["keep_prob"] = args.keep_prob
     options_dict["ae_batch_size"] = args.ae_batch_size
     options_dict["cae_batch_size"] = args.cae_batch_size
