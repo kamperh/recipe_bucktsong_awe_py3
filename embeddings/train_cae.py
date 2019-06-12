@@ -226,7 +226,7 @@ def train_cae(options_dict):
 
     # Get pairs
     pair_list = batching.get_pair_list(train_labels)
-    print("No. pairs:", len(pair_list))
+    print("No. pairs:", int(len(pair_list)/2.0))  # pairs in both directions
 
 
     # DEFINE MODEL
@@ -506,13 +506,14 @@ def check_argv():
         )
     parser.add_argument(
         "--train_tag", type=str, choices=["gt", "gt2", "utd", "rnd", "besgmm",
-        "besgmm1", "besgmm2", "besgmm3", "besgmm_mindur0.425"],
+        "besgmm1", "besgmm2", "besgmm3", "besgmm4", "besgmm_mindur0.425"],
         help="training set tag (default: %(default)s)",
         default=default_options_dict["train_tag"]
         )
     parser.add_argument(
         "--pretrain_tag", type=str, choices=["gt", "gt2", "utd", "rnd",
-        "besgmm", "besgmm1", "besgmm2", "besgmm3", "besgmm_mindur0.425"],
+        "besgmm", "besgmm1", "besgmm2", "besgmm3", "besgmm4",
+        "besgmm_mindur0.425"],
         help="pretraining set tag (default: %(default)s)",
         default=default_options_dict["train_tag"]
         )

@@ -83,7 +83,7 @@ def main():
         os.symlink(npz_fn, link_fn)
 
     # Training: BES-GMM discovered words
-    for tag in ["1", "2", "3"]:
+    for tag in ["1", "2", "3", "4"]:
         npz_fn = path.join(
             relative_features_dir, "mfcc", "buckeye", "devpart1.besgmm" + tag +
             ".dd.npz"
