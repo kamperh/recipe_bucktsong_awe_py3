@@ -376,7 +376,7 @@ def train_cae(options_dict):
 
         cae_pretrain_model_fn = pretrain_model_fn
         if options_dict["pretrain_usefinal"]:
-            ae_pretrain_model_fn = pretrain_intermediate_model_fn
+            cae_pretrain_model_fn = pretrain_intermediate_model_fn  # check line
         if options_dict["ae_n_epochs"] == 0:
             cae_pretrain_model_fn = None
 
