@@ -36,7 +36,7 @@ def main():
 
     # Training: BES-GMM discovered words
     npz_fn = path.join(
-        relative_features_dir, "mfcc", "xitsonga", "xitsonga.besgmm.dd.npz"
+        relative_features_dir, "mfcc", "xitsonga", "xitsonga.besgmm7.dd.npz"
         )
     link_fn = path.join(output_dir, "train.besgmm7.npz")
     assert (

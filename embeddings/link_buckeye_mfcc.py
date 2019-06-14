@@ -70,7 +70,7 @@ def main():
         print("Linking:", npz_fn, "to", link_fn)
         os.symlink(npz_fn, link_fn)
 
-    # Training: BES-GMM discovered words
+    # Training: BES-GMM discovered words (all)
     npz_fn = path.join(
         relative_features_dir, "mfcc", "buckeye", "devpart1.besgmm.dd.npz"
         )
@@ -82,19 +82,32 @@ def main():
         print("Linking:", npz_fn, "to", link_fn)
         os.symlink(npz_fn, link_fn)
 
-    # Training: BES-GMM discovered words
-    for tag in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "sd1", "sd2", "sd3", "sd4"]:
-        npz_fn = path.join(
-            relative_features_dir, "mfcc", "buckeye", "devpart1.besgmm" + tag +
-            ".dd.npz"
-            )
-        link_fn = path.join(output_dir, "train.besgmm" + tag + ".npz")
-        assert (
-            path.isfile(path.join(output_dir, npz_fn))
-            ), "missing file: {}".format(path.join(output_dir, npz_fn))
-        if not path.isfile(link_fn):
-            print("Linking:", npz_fn, "to", link_fn)
-            os.symlink(npz_fn, link_fn)
+    # Training: BES-GMM discovered words (maximum 3 per class)
+    npz_fn = path.join(
+        relative_features_dir, "mfcc", "buckeye", "devpart1.besgmm7.dd.npz"
+        )
+    link_fn = path.join(output_dir, "train.besgmm7.npz")
+    assert (
+        path.isfile(path.join(output_dir, npz_fn))
+        ), "missing file: {}".format(path.join(output_dir, npz_fn))
+    if not path.isfile(link_fn):
+        print("Linking:", npz_fn, "to", link_fn)
+        os.symlink(npz_fn, link_fn)
+
+    # # Training: BES-GMM discovered words
+    # for tag in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "sd1", "sd2",
+    #         "sd3", "sd4"]:
+    #     npz_fn = path.join(
+    #         relative_features_dir, "mfcc", "buckeye", "devpart1.besgmm" + tag
+    #         + ".dd.npz"
+    #         )
+    #     link_fn = path.join(output_dir, "train.besgmm" + tag + ".npz")
+    #     assert (
+    #         path.isfile(path.join(output_dir, npz_fn))
+    #         ), "missing file: {}".format(path.join(output_dir, npz_fn))
+    #     if not path.isfile(link_fn):
+    #         print("Linking:", npz_fn, "to", link_fn)
+    #         os.symlink(npz_fn, link_fn)
 
     # Training: BES-GMM discovered words
     npz_fn = path.join(
