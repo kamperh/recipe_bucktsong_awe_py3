@@ -34,6 +34,18 @@ def main():
         print("Linking:", npz_fn, "to", link_fn)
         os.symlink(npz_fn, link_fn)
 
+    # Training: BES-GMM discovered words
+    npz_fn = path.join(
+        relative_features_dir, "mfcc", "xitsonga", "xitsonga.besgmm.dd.npz"
+        )
+    link_fn = path.join(output_dir, "train.besgmm7.npz")
+    assert (
+        path.isfile(path.join(output_dir, npz_fn))
+        ), "missing file: {}".format(path.join(output_dir, npz_fn))
+    if not path.isfile(link_fn):
+        print("Linking:", npz_fn, "to", link_fn)
+        os.symlink(npz_fn, link_fn)
+
     # Test
     npz_fn = path.join(
         relative_features_dir, "mfcc", "xitsonga", "xitsonga.samediff.dd.npz"
