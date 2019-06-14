@@ -312,7 +312,7 @@ Results: Xitsonga
 Sweep:
 
     ./sweep.py --static_args \
-        "--data_dir data/xitsonga.mfcc --pretrain_usefinal --extrinsic_usefinal --use_test_for_val --cae_n_epochs 3 --train_tag utd" \
+        "--data_dir data/xitsonga.mfcc --pretrain_usefinal --extrinsic_usefinal --use_test_for_val --cae_n_epochs 3 --train_tag utd --ae_n_val_interval 99" \
         --rnd_seed 1,2,3,4,5 train_cae &> models/train_cae_xitsonga.paper.sweep1
 
 Test results:
@@ -330,7 +330,7 @@ results below.
 Sweep:
 
     ./sweep.py --static_args \
-        "--data_dir data/xitsonga.mfcc --pretrain_usefinal --extrinsic_usefinal --use_test_for_val --train_tag utd --cae_n_epochs 0" \
+        "--data_dir data/xitsonga.mfcc --pretrain_usefinal --extrinsic_usefinal --use_test_for_val --train_tag utd --cae_n_epochs 0 --ae_n_val_interval 99" \
         --rnd_seed 1,2,3,4,5 train_cae &> models/train_ae_xitsonga.paper.sweep2
 
 Test results:
@@ -343,7 +343,7 @@ Test results:
 Sweep:
 
     ./sweep.py --static_args \
-        "--data_dir data/xitsonga.mfcc --n_epochs 300 --extrinsic_usefinal --use_test_for_val --train_tag utd" \
+        "--data_dir data/xitsonga.mfcc --n_epochs 300 --extrinsic_usefinal --use_test_for_val --train_tag utd --ae_n_val_interval 99" \
         --rnd_seed 1,2,3,4,5 train_vae &> models/train_va_xitsongae.paper.sweep3
 
 Test results:

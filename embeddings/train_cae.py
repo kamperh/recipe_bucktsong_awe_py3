@@ -35,11 +35,13 @@ import training
 
 default_options_dict = {
         "data_dir": path.join("data", "buckeye.mfcc"),
-        "train_tag": "utd",                 # "gt", "gt2", "utd", "rnd"
-        "pretrain_rnd": False,              # pretrain on random segments
+        "train_tag": "utd",                 # "gt", "gt2", "utd", "rnd",
+                                            # "besgmm", "besgmm7"
+        "pretrain_tag": None,               # if not provided, same tag as
+                                            # train_tag is used
         "max_length": 100,
         "min_length": 50,                   # only used with "rnd" train_tag or 
-                                            # when `pretrain_rnd` is set
+                                            # or pretrain_tag
         "bidirectional": False,
         "rnn_type": "gru",                  # "lstm", "gru", "rnn"
         "enc_n_hiddens": [400, 400, 400],
@@ -61,7 +63,8 @@ default_options_dict = {
                                             # will be used (instead of the
                                             # validation best)
         "use_test_for_val": False,
-        "n_val_interval": 1,
+        "ae_n_val_interval": 1,
+        "cae_n_val_interval": 1,
         "d_speaker_embedding": None,        # if None, no speaker information
                                             # is used, otherwise this is the
                                             # embedding dimensionality
@@ -173,14 +176,17 @@ def train_cae(options_dict):
         )
 
     # Pretraining data (if specified)
-    if options_dict["pretrain_rnd"]:
+    pretrain_tag = options_dict["pretrain_tag"]
+    if options_dict["pretrain_tag"] is not None:
+        min_length = None
+        if options_dict["pretrain_tag"] == "rnd":
+            min_length = options_dict["min_length"]
+            pretrain_tag = "all"
         npz_fn = path.join(
-            options_dict["data_dir"], "train.all.npz"
+            options_dict["data_dir"], "train." + pretrain_tag + ".npz"
             )
         (pretrain_x, pretrain_labels, pretrain_lengths, pretrain_keys,
-            pretrain_speakers) = data_io.load_data_from_npz(
-            npz_fn, options_dict["min_length"]
-            )
+            pretrain_speakers) = data_io.load_data_from_npz(npz_fn, min_length)
 
     # Validation data
     if options_dict["use_test_for_val"]:
@@ -212,7 +218,7 @@ def train_cae(options_dict):
     print("Limiting dimensionality:", d_frame)
     print("Limiting length:", max_length)
     data_io.trunc_and_limit_dim(train_x, train_lengths, d_frame, max_length)
-    if options_dict["pretrain_rnd"]:
+    if options_dict["pretrain_tag"] is not None:
         data_io.trunc_and_limit_dim(
             pretrain_x, pretrain_lengths, d_frame, max_length
             )
@@ -220,6 +226,7 @@ def train_cae(options_dict):
 
     # Get pairs
     pair_list = batching.get_pair_list(train_labels)
+    print("No. pairs:", int(len(pair_list)/2.0))  # pairs in both directions
 
 
     # DEFINE MODEL
@@ -308,12 +315,21 @@ def train_cae(options_dict):
 
     # Train AE
     val_model_fn = pretrain_intermediate_model_fn
-    if options_dict["pretrain_rnd"]:
-        train_batch_iterator = batching.RandomSegmentsIterator(
-            pretrain_x, options_dict["ae_batch_size"],
-            options_dict["ae_n_buckets"], shuffle_every_epoch=True,
-            paired=True
-            )
+    if options_dict["pretrain_tag"] is not None:
+        if options_dict["pretrain_tag"] == "rnd":
+            train_batch_iterator = batching.RandomSegmentsIterator(
+                pretrain_x, options_dict["ae_batch_size"],
+                options_dict["ae_n_buckets"], shuffle_every_epoch=True,
+                paired=True
+                )
+        else:
+            train_batch_iterator = batching.PairedBucketIterator(
+                pretrain_x, [(i, i) for i in range(len(pretrain_x))],
+                options_dict["ae_batch_size"], options_dict["ae_n_buckets"],
+                shuffle_every_epoch=True, speaker_ids=None if
+                options_dict["d_speaker_embedding"] is None else
+                train_speaker_ids
+                )
     else:
         if options_dict["train_tag"] == "rnd":
             train_batch_iterator = batching.RandomSegmentsIterator(
@@ -335,7 +351,7 @@ def train_cae(options_dict):
             [a, a_lengths, b, b_lengths], samediff_val,
             save_model_fn=pretrain_intermediate_model_fn,
             save_best_val_model_fn=pretrain_model_fn,
-            n_val_interval=options_dict["n_val_interval"]
+            n_val_interval=options_dict["ae_n_val_interval"]
             )
     else:
         ae_record_dict = training.train_fixed_epochs_external_val(
@@ -343,7 +359,7 @@ def train_cae(options_dict):
             [a, a_lengths, b, b_lengths, speaker_id], samediff_val,
             save_model_fn=pretrain_intermediate_model_fn,
             save_best_val_model_fn=pretrain_model_fn,
-            n_val_interval=options_dict["n_val_interval"]
+            n_val_interval=options_dict["ae_n_val_interval"]
             )
 
 
@@ -354,7 +370,7 @@ def train_cae(options_dict):
 
         cae_pretrain_model_fn = pretrain_model_fn
         if options_dict["pretrain_usefinal"]:
-            ae_pretrain_model_fn = pretrain_intermediate_model_fn
+            cae_pretrain_model_fn = pretrain_intermediate_model_fn
         if options_dict["ae_n_epochs"] == 0:
             cae_pretrain_model_fn = None
 
@@ -372,7 +388,7 @@ def train_cae(options_dict):
                 train_batch_iterator, [a, a_lengths, b, b_lengths],
                 samediff_val, save_model_fn=intermediate_model_fn,
                 save_best_val_model_fn=model_fn,
-                n_val_interval=options_dict["n_val_interval"],
+                n_val_interval=options_dict["cae_n_val_interval"],
                 load_model_fn=cae_pretrain_model_fn
                 )
         else:
@@ -381,7 +397,7 @@ def train_cae(options_dict):
                 train_batch_iterator, [a, a_lengths, b, b_lengths, speaker_id],
                 samediff_val, save_model_fn=intermediate_model_fn,
                 save_best_val_model_fn=model_fn,
-                n_val_interval=options_dict["n_val_interval"],
+                n_val_interval=options_dict["cae_n_val_interval"],
                 load_model_fn=cae_pretrain_model_fn
                 )
 
@@ -479,20 +495,30 @@ def check_argv():
         "(only used if n_hiddens is also given)"
         )
     parser.add_argument(
+        "--ae_n_val_interval", type=int,
+        help="number of epochs between AE validation (default: %(default)s)",
+        default=default_options_dict["ae_n_val_interval"]
+        )
+    parser.add_argument(
+        "--cae_n_val_interval", type=int,
+        help="number of epochs between AE validation (default: %(default)s)",
+        default=default_options_dict["cae_n_val_interval"]
+        )
+    parser.add_argument(
         "--keep_prob", type=float,
         help="dropout keep probability (default: %(default)s)",
         default=default_options_dict["keep_prob"]
         )
     parser.add_argument(
-        "--train_tag", type=str, choices=["gt", "gt2", "utd", "rnd"],
-        help="training set tag (default: %(default)s)",
+        "--train_tag", type=str, choices=["gt", "gt2", "utd", "rnd", "besgmm",
+        "besgmm7"], help="training set tag (default: %(default)s)",
         default=default_options_dict["train_tag"]
         )
     parser.add_argument(
-        "--pretrain_rnd", action="store_true",
-        help="pretrain on random segments "
-        "(default: %(default)s)",
-        default=default_options_dict["pretrain_rnd"]
+        "--pretrain_tag", type=str, choices=["gt", "gt2", "utd", "rnd",
+        "besgmm", "besgmm7"],
+        help="pretraining set tag (default: %(default)s)",
+        default=default_options_dict["pretrain_tag"]
         )
     parser.add_argument(
         "--bidirectional", action="store_true",
@@ -541,6 +567,8 @@ def main():
     options_dict["data_dir"] = args.data_dir
     options_dict["ae_n_epochs"] = args.ae_n_epochs
     options_dict["cae_n_epochs"] = args.cae_n_epochs
+    options_dict["ae_n_val_interval"] = args.ae_n_val_interval
+    options_dict["cae_n_val_interval"] = args.cae_n_val_interval
     options_dict["keep_prob"] = args.keep_prob
     options_dict["ae_batch_size"] = args.ae_batch_size
     options_dict["cae_batch_size"] = args.cae_batch_size
@@ -549,7 +577,7 @@ def main():
     options_dict["extrinsic_usefinal"] = args.extrinsic_usefinal
     options_dict["use_test_for_val"] = args.use_test_for_val
     options_dict["train_tag"] = args.train_tag
-    options_dict["pretrain_rnd"] = args.pretrain_rnd
+    options_dict["pretrain_tag"] = args.pretrain_tag
     options_dict["rnd_seed"] = args.rnd_seed
     if args.n_hiddens is not None and args.enc_n_layers is not None:
         options_dict["enc_n_hiddens"] = [1]*args.enc_n_layers
@@ -560,6 +588,14 @@ def main():
             options_dict["enc_n_hiddens"][i] = args.n_hiddens
         for i in range(len(options_dict["dec_n_hiddens"])):
             options_dict["dec_n_hiddens"][i] = args.n_hiddens
+
+    # Do not output TensorFlow info and warning messages
+    import warnings
+    warnings.filterwarnings("ignore")
+    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+    tf.logging.set_verbosity(tf.logging.ERROR)
+    if type(tf.contrib) != type(tf):
+        tf.contrib._warning = None
 
     # Train model
     train_cae(options_dict)

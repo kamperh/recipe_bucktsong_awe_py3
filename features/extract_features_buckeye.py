@@ -215,6 +215,43 @@ def main():
         else:
             print("Using existing file:", output_npz_fn)
 
+
+    # BES-GMM DISCOVERED WORD SEGMENTS
+
+    for subset in ["devpart1"]:
+
+        # All discovered words
+        input_npz_fn = path.join(mfcc_dir, subset + ".dd.npz")
+        output_npz_fn = path.join(mfcc_dir, subset + ".besgmm.dd.npz")
+        if not path.isfile(output_npz_fn):
+            list_fn = path.join(
+                "..", "data", "buckeye_devpart1.52e70ca864.besgmm_terms.txt"
+                )
+            print("Extracting MFCCs for BES-GMM word tokens:", subset)
+            utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
+        else:
+            print("Using existing file:", output_npz_fn)
+
+        # A maximum of three pairs per class
+        pairs_fn = path.join(
+            "..", "data",
+            "buckeye_devpart1.52e70ca864.besgmm_pairs_filt7.txt"
+            )
+        list_fn = path.join(
+            "lists", "buckeye_devpart1.52e70ca864.besgmm_terms_filt7.txt"
+            )
+        if not path.isfile(list_fn):
+            utils.terms_from_pairs(pairs_fn, list_fn)
+        else:
+            print("Using existing file:", list_fn)
+        input_npz_fn = path.join(mfcc_dir, subset + ".dd.npz")
+        output_npz_fn = path.join(mfcc_dir, subset + ".besgmm7.dd.npz")
+        if not path.isfile(output_npz_fn):
+            print("Extracting MFCCs for BES-GMM word tokens:", subset)
+            utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
+        else:
+            print("Using existing file:", output_npz_fn)
+
     print(datetime.now())
 
 
