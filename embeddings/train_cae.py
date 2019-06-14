@@ -36,8 +36,7 @@ import training
 default_options_dict = {
         "data_dir": path.join("data", "buckeye.mfcc"),
         "train_tag": "utd",                 # "gt", "gt2", "utd", "rnd",
-                                            # "besgmm", "besgmm1", "besgmm2",
-                                            # "besgmm_mindur0.425"
+                                            # "besgmm", "besgmm7"
         "pretrain_tag": None,               # if not provided, same tag as
                                             # train_tag is used
         "max_length": 100,
@@ -331,11 +330,6 @@ def train_cae(options_dict):
                 options_dict["d_speaker_embedding"] is None else
                 train_speaker_ids
                 )
-        # train_batch_iterator = batching.RandomSegmentsIterator(
-        #     pretrain_x, options_dict["ae_batch_size"],
-        #     options_dict["ae_n_buckets"], shuffle_every_epoch=True,
-        #     paired=True
-        #     )
     else:
         if options_dict["train_tag"] == "rnd":
             train_batch_iterator = batching.RandomSegmentsIterator(
@@ -517,21 +511,15 @@ def check_argv():
         )
     parser.add_argument(
         "--train_tag", type=str, choices=["gt", "gt2", "utd", "rnd", "besgmm",
-        "besgmm1", "besgmm2", "besgmm3", "besgmm4", "besgmm5", "besgmm6",
-        "besgmm7", "besgmm8", "besgmm9", "besgmmsd1", "besgmmsd2", "besgmmsd3",
-        "besgmmsd4", "besgmm_mindur0.425"],
-        help="training set tag (default: %(default)s)",
+        "besgmm7"], help="training set tag (default: %(default)s)",
         default=default_options_dict["train_tag"]
         )
     parser.add_argument(
         "--pretrain_tag", type=str, choices=["gt", "gt2", "utd", "rnd",
-        "besgmm", "besgmm1", "besgmm2", "besgmm3", "besgmm4", "besgmm5",
-        "besgmm6", "besgmm7", "besgmm8", "besgmm9", "besgmmsd1", "besgmmsd2",
-        "besgmmsd3","besgmmsd4", "besgmm_mindur0.425"],
+        "besgmm", "besgmm7"],
         help="pretraining set tag (default: %(default)s)",
         default=default_options_dict["pretrain_tag"]
         )
-
     parser.add_argument(
         "--bidirectional", action="store_true",
         help="use bidirectional encoder and decoder layers "

@@ -219,6 +219,8 @@ def main():
     # BES-GMM DISCOVERED WORD SEGMENTS
 
     for subset in ["devpart1"]:
+
+        # All discovered words
         input_npz_fn = path.join(mfcc_dir, subset + ".dd.npz")
         output_npz_fn = path.join(mfcc_dir, subset + ".besgmm.dd.npz")
         if not path.isfile(output_npz_fn):
@@ -230,49 +232,21 @@ def main():
         else:
             print("Using existing file:", output_npz_fn)
 
-        input_npz_fn = path.join(mfcc_dir, subset + ".dd.npz")
-        output_npz_fn = path.join(mfcc_dir, subset + ".besgmm1.dd.npz")
-        if not path.isfile(output_npz_fn):
-            list_fn = path.join(
-                "..", "data",
-                "buckeye_devpart1.52e70ca864.besgmm_terms_filt1.txt"
-                )
-            print("Extracting MFCCs for BES-GMM word tokens:", subset)
-            utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
-        else:
-            print("Using existing file:", output_npz_fn)
-
-        for tag in ["2", "3", "4", "5", "6", "7", "8", "9", "sd1", "sd2", "sd3", "sd4"]:
-            pairs_fn = path.join(
-                "..", "data",
-                "buckeye_devpart1.52e70ca864.besgmm_pairs_filt" + tag + ".txt"
-                )
-            list_fn = path.join(
-                "lists", "buckeye_devpart1.52e70ca864.besgmm_terms_filt" + tag
-                + ".txt"
-                )
-            if not path.isfile(list_fn):
-                utils.terms_from_pairs(pairs_fn, list_fn)
-            else:
-                print("Using existing file:", list_fn)
-            input_npz_fn = path.join(mfcc_dir, subset + ".dd.npz")
-            output_npz_fn = path.join(mfcc_dir, subset + ".besgmm" + tag +
-            ".dd.npz")
-            if not path.isfile(output_npz_fn):
-                print("Extracting MFCCs for BES-GMM word tokens:", subset)
-                utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
-            else:
-                print("Using existing file:", output_npz_fn)
-
-        input_npz_fn = path.join(mfcc_dir, subset + ".dd.npz")
-        output_npz_fn = path.join(
-            mfcc_dir, subset + ".besgmm_mindur0.425.dd.npz"
+        # A maximum of three pairs per class
+        pairs_fn = path.join(
+            "..", "data",
+            "buckeye_devpart1.52e70ca864.besgmm_pairs_filt7.txt"
             )
+        list_fn = path.join(
+            "lists", "buckeye_devpart1.52e70ca864.besgmm_terms_filt7.txt"
+            )
+        if not path.isfile(list_fn):
+            utils.terms_from_pairs(pairs_fn, list_fn)
+        else:
+            print("Using existing file:", list_fn)
+        input_npz_fn = path.join(mfcc_dir, subset + ".dd.npz")
+        output_npz_fn = path.join(mfcc_dir, subset + ".besgmm7.dd.npz")
         if not path.isfile(output_npz_fn):
-            list_fn = path.join(
-                "..", "data",
-                "buckeye_devpart1.52e70ca864.besgmm_terms.mindur0.425.txt"
-                )
             print("Extracting MFCCs for BES-GMM word tokens:", subset)
             utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
         else:

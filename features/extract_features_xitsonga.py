@@ -158,6 +158,19 @@ def main():
 
     # BES-GMM DISCOVERED WORD SEGMENTS
 
+    # All discovered words
+    input_npz_fn = path.join(mfcc_dir, "xitsonga.dd.npz")
+    output_npz_fn = path.join(mfcc_dir, "xitsonga.besgmm.dd.npz")
+    if not path.isfile(output_npz_fn):
+        list_fn = path.join(
+            "..", "data", "buckeye_devpart1.52e70ca864.besgmm_terms.txt"
+            )
+        print("Extracting MFCCs for BES-GMM word tokens")
+        utils.segments_from_npz(input_npz_fn, list_fn, output_npz_fn)
+    else:
+        print("Using existing file:", output_npz_fn)
+
+    # A maximum of three pairs per class
     pairs_fn = path.join(
         "..", "data", "xitsonga.d18547ee5e.besgmm_pairs_filt7.txt"
         )
