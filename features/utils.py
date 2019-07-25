@@ -171,7 +171,7 @@ def segments_from_npz(input_npz_fn, segments_fn, output_npz_fn):
 
     print(
         "Extracted " + str(n_target_segs) + " out of " + str(len(target_segs))
-        + " segments."
+        + " segments"
         )
     print("Writing:", output_npz_fn)
     np.savez(output_npz_fn, **output_npz)

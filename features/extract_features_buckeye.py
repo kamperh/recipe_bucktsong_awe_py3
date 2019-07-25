@@ -160,6 +160,7 @@ def main():
         else:
             print("Using existing file:", output_npz_fn)
 
+
     # UTD-DISCOVERED WORD SEGMENTS
 
     # Remove non-VAD regions from the UTD pair list

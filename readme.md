@@ -13,7 +13,12 @@ experiments are described in:
 
 Please cite this paper if you use the code.
 
-**TODO: Mention if this recipe replaces an older one.**
+*Note:* This is an updated version of the
+https://github.com/kamperh/recipe_bucktsong_awe recipe. The code here uses
+Python 3 (instead of Python 2.7) and uses LibROSA for feature extraction
+instead of HTK. Because of slight differences in input features, the results
+here does not exactly match those in the paper above, since the older recipe
+was used for the submitted paper.
 
 
 Disclaimer

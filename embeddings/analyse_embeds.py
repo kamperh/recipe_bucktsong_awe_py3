@@ -88,7 +88,6 @@ def plot_raw_embeds(npz, types=None):
     par2.set_ylabel("Word types")
     for line in par2.yaxis.get_minorticklines():
         line.set_visible(False)
-
     cax = host.imshow(
         np.array(embeddings)[sort_order], interpolation="nearest",
         aspect="auto"
@@ -113,8 +112,7 @@ def plot_embeds_2d(embeds_dict, types=None):
     embeddings, labels = get_embeds_and_labels(embeds_dict, types)
     tsne = manifold.TSNE(
         # n_components=2, perplexity=10, init="pca", random_state=0
-        n_components=2, perplexity=20, init="random",
-        random_state=1
+        n_components=2, perplexity=20, init="random", random_state=1
         )
     X_tsne = tsne.fit_transform(embeddings)
     plot_labelled_2d_data(X_tsne, labels, "t-SNE")

@@ -20,7 +20,7 @@ actually results in worse performance for some of the models.
 
 Correspondence autoencoder
 --------------------------
-Train an CAE-RNN on ground truth segments:
+Train a CAE-RNN on ground truth segments:
 
     # Buckeye
     ./train_cae.py --cae_n_epochs 30 --train_tag gt
