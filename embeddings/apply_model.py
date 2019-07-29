@@ -58,7 +58,7 @@ def build_model(x, x_lengths, options_dict):
     return model_dict
 
 
-def apply_model(model_fn, subset, language):
+def apply_model(model_fn, subset, language, batch_size=None):
 
     # assert language is None  # to-do
 
@@ -94,16 +94,19 @@ def apply_model(model_fn, subset, language):
         model = build_model(x, None, options_dict)
 
         # Embed data
-        batch_iterator = batching.LabelledIterator(
-            x_data, None, x_data.shape[0], False
-            )
-        saver = tf.train.Saver()
-        with tf.Session() as session:
-            saver.restore(session, model_fn)
-            for batch_x in batch_iterator:
-                np_z = session.run(
-                    [model["encoding"]], feed_dict={x: batch_x})[0]
-                break  # single batch
+        if batch_size is None:
+            batch_iterator = batching.LabelledIterator(
+                x_data, None, x_data.shape[0], False
+                )
+            saver = tf.train.Saver()
+            with tf.Session() as session:
+                saver.restore(session, model_fn)
+                for batch_x in batch_iterator:
+                    np_z = session.run(
+                        [model["encoding"]], feed_dict={x: batch_x})[0]
+                    break  # single batch
+        else:
+            assert False, "need to implement"
 
     else:  # rnn
         
@@ -118,18 +121,38 @@ def apply_model(model_fn, subset, language):
         model = build_model(x, x_lengths, options_dict)
 
         # Embed data
-        batch_iterator = batching.SimpleIterator(x_data, len(x_data), False)
-        saver = tf.train.Saver()
-        with tf.Session() as session:
-            saver.restore(session, model_fn)
-            for batch_x_padded, batch_x_lengths in batch_iterator:
-                np_x = batch_x_padded
-                np_x_lengths = batch_x_lengths
-                np_z = session.run(
-                    [model["encoding"]], feed_dict={x: np_x, x_lengths:
-                    np_x_lengths}
-                    )[0]
-                break  # single batch
+        if batch_size is None:
+            batch_iterator = batching.SimpleIterator(
+                x_data, len(x_data), False
+                )
+            saver = tf.train.Saver()
+            with tf.Session() as session:
+                saver.restore(session, model_fn)
+                for batch_x_padded, batch_x_lengths in batch_iterator:
+                    np_x = batch_x_padded
+                    np_x_lengths = batch_x_lengths
+                    np_z = session.run(
+                        [model["encoding"]], feed_dict={x: np_x, x_lengths:
+                        np_x_lengths}
+                        )[0]
+                    break  # single batch
+        else:
+            batch_iterator = batching.SimpleIterator(
+                x_data, batch_size, False
+                )
+            saver = tf.train.Saver()
+            with tf.Session() as session:
+                saver.restore(session, model_fn)
+                np_z = []
+                for batch_x_padded, batch_x_lengths in batch_iterator:
+                    np_x = batch_x_padded
+                    np_x_lengths = batch_x_lengths
+                    cur_np_z = session.run(
+                        [model["encoding"]], feed_dict={x: np_x, x_lengths:
+                        np_x_lengths}
+                        )[0]
+                    np_z.append(cur_np_z)
+                np_z = np.hstack(np_z)
 
     embed_dict = {}
     for i, utt_key in enumerate([keys[i] for i in batch_iterator.indices]):
@@ -157,6 +180,10 @@ def check_argv():
         help="if provided, this language is used instead of the language in "
         "the model's options dictionary"
         )
+    parser.add_argument(
+        "--batch_size", type=int, 
+        help="size of mini-batch (default: %(default)s)",
+        )
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
@@ -171,7 +198,9 @@ def main():
     args = check_argv()
 
     # Embed data
-    embed_dict = apply_model(args.model_fn, args.subset, args.language)
+    embed_dict = apply_model(
+        args.model_fn, args.subset, args.language, args.batch_size
+        )
 
     # Save embeddings
     model_dir, model_fn = path.split(args.model_fn)
