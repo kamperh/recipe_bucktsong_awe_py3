@@ -151,8 +151,10 @@ def apply_model(model_fn, subset, language, batch_size=None):
                         [model["encoding"]], feed_dict={x: np_x, x_lengths:
                         np_x_lengths}
                         )[0]
+                    print("!", cur_np_z.shape)
                     np_z.append(cur_np_z)
                 np_z = np.vstack(np_z)
+                print("!", np_z.shape)
 
     embed_dict = {}
     for i, utt_key in enumerate([keys[i] for i in batch_iterator.indices]):
