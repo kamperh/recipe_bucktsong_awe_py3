@@ -152,7 +152,7 @@ def apply_model(model_fn, subset, language, batch_size=None):
                         np_x_lengths}
                         )[0]
                     np_z.append(cur_np_z)
-                np_z = np.hstack(np_z)
+                np_z = np.vstack(np_z)
 
     embed_dict = {}
     for i, utt_key in enumerate([keys[i] for i in batch_iterator.indices]):
