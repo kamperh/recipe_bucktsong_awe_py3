@@ -8,6 +8,19 @@ Performs same-different evaluation on frame-level features using dynamic time
 warping (DTW) alignment.
 
 
+Feature format
+--------------
+The input feature files are NumPy archives. Each key in the archive should have
+the format `<label>_<speaker>_<other_identifiers>`. For instance
+`acceptable_s19_01b_052667-052721` is the word "acceptable" spoken by speaker
+"s19" in the Buckeye corpus, with the remaining part of the key indicating the
+particular utterance and interval (but this is ignored). The label is used for
+the word identity in the same-different task. The entry in this archive would
+be the speech features (features are stacked row-wise). For instance
+`feats["acceptable_s19_01b_052667-052721"].shape` whould be `(54, 39)`,
+indicating 54 frames, each of 39 dimensions.
+
+
 Evaluation
 ----------
 This needs to be run on a multi-core machine. Change the `n_cpus` variable in
