@@ -34,41 +34,40 @@ import training
 #-----------------------------------------------------------------------------#
 
 default_options_dict = {
-        "data_dir": path.join("data", "buckeye.mfcc"),
-        "train_tag": "utd",                 # "gt", "gt2", "utd", "rnd",
-                                            # "besgmm", "besgmm7"
-        "pretrain_tag": None,               # if not provided, same tag as
-                                            # train_tag is used
-        "max_length": 100,
-        "min_length": 50,                   # only used with "rnd" train_tag or 
-                                            # or pretrain_tag
-        "bidirectional": False,
-        "rnn_type": "gru",                  # "lstm", "gru", "rnn"
-        "enc_n_hiddens": [400, 400, 400],
-        "dec_n_hiddens": [400, 400, 400],
-        "n_z": 130,                         # latent dimensionality
-        "learning_rate": 0.001,
-        "keep_prob": 1.0,
-        "ae_n_epochs": 100,                 # AE pretraining options
-        "ae_batch_size": 300,
-        "ae_n_buckets": 3,
-        "pretrain_usefinal": False,         # if True, do not use best
-                                            # validation AE model, but rather
-                                            # use final model
-        "cae_n_epochs": 10,                 # CAE training options
-        "cae_batch_size": 300,
-        "cae_n_buckets": 3,
-        "extrinsic_usefinal": False,        # if True, during final extrinsic
-                                            # evaluation, the final saved model
-                                            # will be used (instead of the
-                                            # validation best)
-        "use_test_for_val": False,
-        "ae_n_val_interval": 1,
-        "cae_n_val_interval": 1,
-        "d_speaker_embedding": None,        # if None, no speaker information
-                                            # is used, otherwise this is the
-                                            # embedding dimensionality
-        "rnd_seed": 1,
+    "data_dir": path.join("data", "buckeye.mfcc"),
+    "train_tag": "utd",                 # "gt", "gt2", "utd", "rnd",
+                                        # "besgmm", "besgmm7"
+    "pretrain_tag": None,               # if not provided, same tag as
+                                        # train_tag is used
+    "max_length": 100,
+    "min_length": 50,                   # only used with "rnd" train_tag or 
+                                        # pretrain_tag
+    "bidirectional": False,
+    "rnn_type": "gru",                  # "lstm", "gru", "rnn"
+    "enc_n_hiddens": [400, 400, 400],
+    "dec_n_hiddens": [400, 400, 400],
+    "n_z": 130,                         # latent dimensionality
+    "learning_rate": 0.001,
+    "keep_prob": 1.0,
+    "ae_n_epochs": 100,                 # AE pretraining options
+    "ae_batch_size": 300,
+    "ae_n_buckets": 3,
+    "pretrain_usefinal": False,         # if True, do not use best validation
+                                        # AE model, but rather use final model
+    "cae_n_epochs": 10,                 # CAE training options
+    "cae_batch_size": 300,
+    "cae_n_buckets": 3,
+    "extrinsic_usefinal": False,        # if True, during final extrinsic
+                                        # evaluation, the final saved model
+                                        # will be used (instead of the
+                                        # validation best)
+    "use_test_for_val": False,
+    "ae_n_val_interval": 1,
+    "cae_n_val_interval": 1,
+    "d_speaker_embedding": None,        # if None, no speaker information is
+                                        # used, otherwise this is the embedding
+                                        # dimensionality
+    "rnd_seed": 1,
     }
 
 
